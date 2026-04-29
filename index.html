@@ -1502,6 +1502,10 @@
   // ───── boot — always land on the cover; her answers persist ─────
   setStep(0);
 
+  // ping kvdb on load so the session shows up on the dashboard
+  // even before she advances past the cover
+  sendProgressCheckpoint(state.step, 'load');
+
   // brand mark → cover
   const brandEl = document.querySelector('.mark');
   if (brandEl) {
