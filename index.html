@@ -1058,38 +1058,65 @@
 
   // ───── progress checkpoint (writes cumulative state on Continue, Back, edit, pill) ─────
   let pendingCheckpoint = null;
+  function buildCheckpointPayload(currentStep, reason) {
+    return {
+      session_id: state.session_id,
+      started_at: state.started_at,
+      updated_at: new Date().toISOString(),
+      last_event: reason || 'unknown',
+      current_step: currentStep,
+      completed_step: currentStep,
+      total_steps: TOTAL - 1,
+      submitted: false,
+      name: state.fields.biz_name || (state.fields.one_sentence || '').slice(0, 60) || 'Anonymous session',
+      fields: state.fields,
+      first: state.first,
+      history: state.history,
+      pills: state.pills,
+      uploads: Object.fromEntries(
+        Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
+      ),
+      summary: buildText(),
+    };
+  }
+  async function putCheckpoint(payload) {
+    try {
+      await fetch(KVDB_BASE + '/' + state.session_id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) { /* fail silent — final submit is the source of truth */ }
+  }
   async function sendProgressCheckpoint(currentStep, reason) {
     // coalesce rapid checkpoints (typing burst) into a single write ~600ms later
     clearTimeout(pendingCheckpoint);
-    pendingCheckpoint = setTimeout(async () => {
-      const payload = {
-        session_id: state.session_id,
-        started_at: state.started_at,
-        updated_at: new Date().toISOString(),
-        last_event: reason || 'unknown',
-        current_step: currentStep,
-        completed_step: currentStep,
-        total_steps: TOTAL - 1,
-        submitted: false,
-        name: state.fields.biz_name || (state.fields.one_sentence || '').slice(0, 60) || 'Anonymous session',
-        fields: state.fields,
-        first: state.first,
-        history: state.history,
-        pills: state.pills,
-        uploads: Object.fromEntries(
-          Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
-        ),
-        summary: buildText(),
-      };
-      try {
-        await fetch(KVDB_BASE + '/' + state.session_id, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      } catch (err) { /* fail silent — final submit is the source of truth */ }
-    }, 600);
+    pendingCheckpoint = setTimeout(() => putCheckpoint(buildCheckpointPayload(currentStep, reason)), 600);
   }
+  // sync immediately when she backgrounds the tab or closes it — sendBeacon survives unload
+  function flushCheckpointNow(reason) {
+    clearTimeout(pendingCheckpoint);
+    const payload = buildCheckpointPayload(state.step, reason || 'flush');
+    const url = KVDB_BASE + '/' + state.session_id;
+    try {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      // sendBeacon only does POST; kvdb accepts POST as upsert too. Fall back to keepalive PUT.
+      if (navigator.sendBeacon && navigator.sendBeacon(url, blob)) return;
+    } catch {}
+    try {
+      fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      });
+    } catch {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushCheckpointNow('visibility-hidden');
+  });
+  window.addEventListener('pagehide', () => flushCheckpointNow('pagehide'));
+  window.addEventListener('beforeunload', () => flushCheckpointNow('beforeunload'));
   async function markSubmitted() {
     try {
       const payload = {
