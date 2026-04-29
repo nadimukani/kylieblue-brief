@@ -308,13 +308,21 @@
 
   /* ───────── NAV ───────── */
   .nav {
-    padding: 24px 0 40px;
+    position: sticky;
+    bottom: 0;
+    padding: 18px 0;
+    margin-top: 24px;
     border-top: 1px solid var(--hair);
+    background: linear-gradient(to bottom, rgba(242, 235, 224, 0.4), var(--paper) 24%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
+    z-index: 50;
   }
+  .stage { padding-bottom: 24px; }
   .btn {
     font-family: var(--sans);
     font-size: 14px;
@@ -898,7 +906,16 @@
     n = Math.max(0, Math.min(TOTAL, n));
     state.step = n;
     save();
-    steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+    steps.forEach(s => {
+      const isActive = +s.dataset.step === n;
+      s.classList.toggle('active', isActive);
+      if (isActive) {
+        // force animation restart on every navigation
+        s.style.animation = 'none';
+        s.offsetHeight; // trigger reflow
+        s.style.animation = '';
+      }
+    });
     cur.textContent = n + 1;
     progFill.style.width = ((n) / TOTAL * 100) + '%';
     back.disabled = n === 0;
@@ -1328,8 +1345,16 @@
     location.reload();
   });
 
-  // ───── boot ─────
-  setStep(state.step);
+  // ───── boot — always land on the cover; her answers persist ─────
+  setStep(0);
+
+  // brand mark → cover
+  const brandEl = document.querySelector('.mark');
+  if (brandEl) {
+    brandEl.style.cursor = 'pointer';
+    brandEl.title = 'Back to start';
+    brandEl.addEventListener('click', () => setStep(0));
+  }
 })();
 </script>
 
