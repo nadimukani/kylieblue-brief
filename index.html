@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>For Kylie</title>
+<meta name="description" content="A few questions to help us build your website.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:    #F2EBE0;
+    --paper-2:  #ECE3D5;
+    --ink:      #1C1A18;
+    --ink-2:    #2F3F4D;
+    --soft:     #7A6F63;
+    --hair:     #D9CFC2;
+    --accent:   #4A6B85;
+    --accent-2: #6E8AA3;
+    --serif:    'Fraunces', Georgia, serif;
+    --sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  /* ───────── PAPER LAYOUT ───────── */
+  .paper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ───────── TOP BAR ───────── */
+  .topbar {
+    padding: 28px 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .mark {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .mark em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+  .progress-track {
+    flex: 1;
+    height: 1px;
+    background: var(--hair);
+    position: relative;
+    max-width: 240px;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .meta {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+    white-space: nowrap;
+  }
+
+  /* ───────── STAGE ───────── */
+  .stage {
+    flex: 1;
+    padding: 24px 0 64px;
+    position: relative;
+  }
+  .step {
+    display: none;
+    animation: stepIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .step.active { display: block; }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .step { animation: none; }
+    .progress-fill { transition: none; }
+  }
+
+  /* ───────── STEP HEADER ───────── */
+  .step-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .step h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    font-variation-settings: "opsz" 144;
+  }
+  .step h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .lead {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(17px, 1.9vw, 21px);
+    line-height: 1.55;
+    color: var(--soft);
+    max-width: 560px;
+    margin: 0 0 24px;
+  }
+
+  /* ───────── STORY (the priming voice) ───────── */
+  .story {
+    background: var(--paper-2);
+    border-left: 2px solid var(--accent);
+    padding: 18px 22px;
+    margin: 0 0 36px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 600px;
+  }
+
+  /* ───────── FIELDS ───────── */
+  .field {
+    margin: 0 0 28px;
+  }
+  .field label {
+    display: block;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .field .hint {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--soft);
+    margin-bottom: 10px;
+    max-width: 580px;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="url"],
+  .field input[type="date"],
+  .field textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--hair);
+    padding: 10px 0;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--ink);
+    resize: none;
+    outline: none;
+    transition: border-color 0.25s ease;
+    border-radius: 0;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-bottom-color: var(--accent);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--soft);
+    font-style: italic;
+    opacity: 0.6;
+  }
+  .field textarea {
+    min-height: 60px;
+    overflow: hidden;
+  }
+
+  /* ───────── TOGGLE GROUP ───────── */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .pill {
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--hair);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill.on {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* ───────── UPLOAD ───────── */
+  .upload {
+    border: 1.5px dashed var(--hair);
+    border-radius: 4px;
+    padding: 28px;
+    text-align: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    background: transparent;
+  }
+  .upload:hover, .upload.dragover {
+    border-color: var(--accent);
+    background: var(--paper-2);
+  }
+  .upload .uic {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--soft);
+    margin: 0;
+  }
+  .upload .uic strong {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 500;
+    font-family: var(--sans);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .upload input[type="file"] { display: none; }
+  .thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .thumbs:empty { display: none; }
+  .thumb {
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--paper-2);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    animation: thumbIn 0.4s ease both;
+  }
+  @keyframes thumbIn {
+    from { opacity: 0; transform: scale(0.94); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .thumb .x {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 11px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .thumb:hover .x { opacity: 1; }
+
+  /* ───────── NAV ───────── */
+  .nav {
+    padding: 24px 0 40px;
+    border-top: 1px solid var(--hair);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-ghost {
+    color: var(--soft);
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding-left: 26px; padding-right: 26px;
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+  .btn-link {
+    color: var(--accent);
+    padding: 6px 0;
+  }
+  .btn-link:hover { color: var(--ink); }
+  .btn[disabled] { opacity: 0.35; cursor: not-allowed; }
+
+  /* ───────── DONE / SUMMARY ───────── */
+  .summary {
+    background: var(--paper-2);
+    padding: 28px;
+    border-radius: 4px;
+    margin: 24px 0;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-height: 360px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+  .actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .actions-grid .btn { text-align: center; }
+
+  /* ───────── KEYBOARD HINT ───────── */
+  .hint-key {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--soft);
+    text-transform: uppercase;
+  }
+  .hint-key kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    border: 1px solid var(--hair);
+    border-radius: 3px;
+    font-family: var(--sans);
+    font-size: 10px;
+    color: var(--ink);
+    margin: 0 2px;
+  }
+
+  /* ───────── INTRO COVER ───────── */
+  .cover-wrap {
+    padding-top: 12vh;
+    padding-bottom: 32px;
+  }
+  .cover-wrap h1 {
+    font-size: clamp(64px, 13vw, 128px);
+    margin-bottom: 24px;
+  }
+  .letter {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 560px;
+    margin: 28px 0;
+  }
+  .letter p { margin: 0 0 16px; }
+  .letter p.aside {
+    font-style: italic;
+    color: var(--soft);
+  }
+
+  /* ───────── DONE COVER ───────── */
+  .done-mark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(32px, 4.4vw, 44px);
+    line-height: 1.2;
+    color: var(--ink);
+    margin: 12px 0 8px;
+    font-variation-settings: "opsz" 96;
+  }
+
+  /* ───────── MOBILE ───────── */
+  @media (max-width: 600px) {
+    .paper { padding: 0 22px; }
+    .topbar { padding: 20px 0 16px; }
+    .progress-track { display: none; }
+    .step h1 { font-size: 36px; }
+    .nav { padding: 18px 0 28px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+
+  /* ───────── PRINT ───────── */
+  @media print {
+    .topbar, .nav { display: none; }
+    body { background: white; }
+    .step { display: block !important; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="paper">
+
+  <header class="topbar">
+    <div class="mark">Kylie <em>Blue</em></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="meta"><span id="cur">1</span> / <span id="total">12</span></div>
+  </header>
+
+  <main class="stage" id="stage">
+
+    <!-- ───────── 0 — COVER / LETTER ───────── -->
+    <section class="step active cover-wrap" data-step="0">
+      <h1>For<br><em>Kylie</em></h1>
+      <div class="letter">
+        <p>Hi my love,</p>
+        <p>This isn't a form. There's no right answer — a word, a screenshot, a feeling is enough. Skip what doesn't speak to you. Come back to it.</p>
+        <p>By the time you finish, you're going to feel clearer about your work than you have in months. Promise.</p>
+        <p class="aside">Take your time. This is going to be beautiful — like you.</p>
+      </div>
+      <p class="hint-key">Press <kbd>↵</kbd> to begin.</p>
+    </section>
+
+    <!-- ───────── 1 — IDENTITY ───────── -->
+    <section class="step" data-step="1">
+      <div class="step-num">One</div>
+      <h1>Who you are, in <em>your own words</em></h1>
+      <p class="lead">Don't overthink. First instinct is almost always the truest one.</p>
+      <div class="story">Picture your favorite photo you've ever taken. The light, the moment, the person in it. Hold it in your head and answer with that photo as your witness — your answers will be truer.</div>
+
+      <div class="field">
+        <label>Your one sentence</label>
+        <span class="hint">"I'm a [city] [type] photographer who [the thing that makes you, you]."</span>
+        <input type="text" data-key="one_sentence" placeholder="I'm a Nashville wedding photographer who…" />
+      </div>
+
+      <div class="field">
+        <label>Three words for your photography</label>
+        <span class="hint">Not what sounds nice — what's true.</span>
+        <input type="text" data-key="photo_words" placeholder="warm. patient. quiet." />
+      </div>
+
+      <div class="field">
+        <label>Three words for how the website should feel</label>
+        <span class="hint">The site has its own atmosphere — different from your photographs.</span>
+        <input type="text" data-key="site_words" placeholder="calm, editorial, sun-bleached" />
+      </div>
+
+      <div class="field">
+        <label>The kind of person you want walking through your inbox</label>
+        <span class="hint">Two or three sentences. Be specific — you're describing a friend.</span>
+        <textarea data-key="dream_client" rows="3" placeholder="Someone who…"></textarea>
+      </div>
+
+      <div class="field">
+        <label>And the kind of work you don't want</label>
+        <span class="hint">Saying no out loud helps the site say it for you, gently.</span>
+        <textarea data-key="no_work" rows="2" placeholder="Anything that feels…"></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 2 — KNOWN BY ───────── -->
+    <section class="step" data-step="2">
+      <div class="step-num">Two</div>
+      <h1>What you're <em>known by</em></h1>
+      <p class="lead">The smallest details. Easy ones to knock out.</p>
+      <div class="story">These tiny strings of text — a handle, an email, a name — are what the internet uses to recognize you. Pick the ones you want to be found by for the next decade.</div>
+
+      <div class="field">
+        <label>Business name</label>
+        <input type="text" data-key="biz_name" placeholder="Kylie Blue" />
+      </div>
+      <div class="field">
+        <label>Instagram handle</label>
+        <input type="text" data-key="ig" placeholder="@kylieblue" />
+      </div>
+      <div class="field">
+        <label>Other handles (Pinterest, TikTok — optional)</label>
+        <input type="text" data-key="other_handles" placeholder="" />
+      </div>
+      <div class="field">
+        <label>Public-facing email</label>
+        <input type="email" data-key="public_email" placeholder="hello@kylieblue.com" />
+      </div>
+    </section>
+
+    <!-- ───────── 3 — THE LOOK ───────── -->
+    <section class="step" data-step="3">
+      <div class="step-num">Three</div>
+      <h1>The look — <em>show, don't tell</em></h1>
+      <p class="lead">The fastest way to design something beautiful is to show it.</p>
+      <div class="story">You have great taste. Trust it. Drop in five to fifteen things that make you say "yes, like that" — they don't have to be photography. A magazine spread, a hotel lobby, a film still, a typeface — all useful. We'll read your taste exactly.</div>
+
+      <div class="field">
+        <label>Your mood board</label>
+        <span class="hint">Drop or click. Images get resized for preview — full quality stays on your computer.</span>
+        <label class="upload" id="up-mood">
+          <input type="file" multiple accept="image/*" data-bin="moodboard" />
+          <p class="uic"><strong>+ ADD IMAGES</strong><br>or drag them here</p>
+        </label>
+        <div class="thumbs" id="thumbs-moodboard"></div>
+      </div>
+
+      <div class="field">
+        <label>Photographer websites you'd love to be confused for</label>
+        <span class="hint">Two or three. Famous or unknown — doesn't matter.</span>
+        <textarea data-key="ref_sites" rows="3" placeholder="https://…"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Something outside photography with the right energy</label>
+        <span class="hint">A brand, a hotel, a magazine, a film, a song.</span>
+        <input type="text" data-key="ref_outside" placeholder="" />
+      </div>
+
+      <div class="field">
+        <label>And the opposite</label>
+        <span class="hint">One or two sites that feel "not you" — sometimes "not that" is the clearest brief.</span>
+        <textarea data-key="ref_anti" rows="2" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>Color, in a sentence</label>
+        <span class="hint">Just describe what you see when you close your eyes.</span>
+        <input type="text" data-key="color_word" placeholder="warm and earthy, almost film…" />
+      </div>
+
+      <div class="field">
+        <label>Type</label>
+        <div class="pill-group" data-pill-key="type_pref">
+          <button class="pill" type="button" data-val="modern-sans">Modern, sans-serif</button>
+          <button class="pill" type="button" data-val="editorial-serif">Editorial, serif</button>
+          <button class="pill" type="button" data-val="mix">A bit of both</button>
+          <button class="pill" type="button" data-val="trust-you">Trust you to feel it out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── 4 — PHOTOGRAPHS ───────── -->
+    <section class="step" data-step="4">
+      <div class="step-num">Four</div>
+      <h1>Your <em>photographs</em></h1>
+      <p class="lead">You have these already. The hard part is choosing fewer than feels natural.</p>
+      <div class="story">Awwwards-winning sites all share one thing — restraint. Your strongest 30 are stronger than 200. The fewer images you show, the more weight each one carries. Every cut makes the site stronger.</div>
+
+      <div class="field">
+        <label>The one</label>
+        <span class="hint">The single image that, if a stranger saw nothing else, would tell them exactly who you are.</span>
+        <label class="upload">
+          <input type="file" accept="image/*" data-bin="hero" />
+          <p class="uic"><strong>+ ADD HERO IMAGE</strong></p>
+        </label>
+        <div class="thumbs" id="thumbs-hero"></div>
+      </div>
+
+      <div class="field">
+        <label>You — a real headshot</label>
+        <span class="hint">Not a selfie. We're going to put it where people can see your face.</span>
+        <label class="upload">
+          <input type="file" accept="image/*" data-bin="headshot" />
+          <p class="uic"><strong>+ ADD HEADSHOT</strong></p>
+        </label>
+        <div class="thumbs" id="thumbs-headshot"></div>
+      </div>
+
+      <div class="field">
+        <label>Drop the rest in a folder, paste the link</label>
+        <span class="hint">30–50 of your strongest, mix of vertical + horizontal, mix of wide + detail. Dropbox, Drive, WeTransfer — whatever you use.</span>
+        <input type="url" data-key="portfolio_link" placeholder="https://drive.google.com/…" />
+      </div>
+
+      <div class="field">
+        <label>How you want the work split into categories</label>
+        <span class="hint">Weddings / Couples / Families / Editorial — whatever yours are. Use the names you want on the site.</span>
+        <textarea data-key="categories" rows="3" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 5 — STORY ───────── -->
+    <section class="step" data-step="5">
+      <div class="step-num">Five</div>
+      <h1>Your <em>story</em></h1>
+      <p class="lead">Don't write copy. Just answer. We'll shape your voice into the page.</p>
+      <div class="story">The strongest About pages don't sell. They sound exactly like the person who wrote them. Don't try to be impressive — be specific. Specific is what people remember ten years later.</div>
+
+      <div class="field">
+        <label>Why you started shooting</label>
+        <textarea data-key="story_why" rows="3" placeholder=""></textarea>
+      </div>
+      <div class="field">
+        <label>What it feels like to be photographed by you</label>
+        <span class="hint">From the client's side of the camera.</span>
+        <textarea data-key="story_feel" rows="3" placeholder=""></textarea>
+      </div>
+      <div class="field">
+        <label>What you want clients to feel when they look at their photos in ten years</label>
+        <textarea data-key="story_legacy" rows="3" placeholder=""></textarea>
+      </div>
+      <div class="field">
+        <label>Three things about you that have nothing to do with photography</label>
+        <span class="hint">Your dog, where you grew up, the album on repeat, the weird thing you collect.</span>
+        <textarea data-key="story_personal" rows="3" placeholder=""></textarea>
+      </div>
+      <div class="field">
+        <label>How you learned, anything you've been featured in (optional)</label>
+        <textarea data-key="story_credits" rows="2" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 6 — OFFER ───────── -->
+    <section class="step" data-step="6">
+      <div class="step-num">Six</div>
+      <h1>What you offer, and <em>what it costs</em></h1>
+      <p class="lead">Even rough drafts move things forward.</p>
+      <div class="story">Your prices teach clients what your work is worth. If the number scares you a little, write it down anyway — half the work of pricing is just saying it out loud. You can revise. You can't revise what you never named.</div>
+
+      <div class="field">
+        <label>Your packages</label>
+        <span class="hint">Name each (give them voice — "The Half-Day," "The Whole Story" beats "Package 1") and list what's inside (hours, edited images, second shooter, prints, gallery delivery time).</span>
+        <textarea data-key="packages" rows="6" placeholder="The Whole Day — 8 hours, 600+ edited images, second shooter, gallery in 6 weeks…"></textarea>
+      </div>
+
+      <div class="field">
+        <label>How you want pricing shown</label>
+        <div class="pill-group" data-pill-key="pricing_style">
+          <button class="pill" type="button" data-val="real">Real prices on the site</button>
+          <button class="pill" type="button" data-val="starting">"Starting at" ranges</button>
+          <button class="pill" type="button" data-val="inquire">Inquire only</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Travel + deposit</label>
+        <span class="hint">How travel works (flat / per mile / included within X miles), and the deposit % to book.</span>
+        <textarea data-key="travel_deposit" rows="2" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>Add-ons</label>
+        <span class="hint">Engagement session, rehearsal, second shooter, prints, an album.</span>
+        <textarea data-key="addons" rows="2" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 7 — INBOX ───────── -->
+    <section class="step" data-step="7">
+      <div class="step-num">Seven</div>
+      <h1>How clients <em>reach you</em></h1>
+      <p class="lead">Every word on your inquiry form teaches the client how to write to you.</p>
+      <div class="story">The right questions filter the right people. Asking for a budget range gently teaches "this is a real conversation, not a window-shop." Asking how they found you teaches you which marketing actually works.</div>
+
+      <div class="field">
+        <label>Form fields you want — pick all that apply</label>
+        <div class="pill-group" data-pill-key="form_fields" data-multi="true">
+          <button class="pill" type="button" data-val="phone">Phone</button>
+          <button class="pill" type="button" data-val="date">Event date</button>
+          <button class="pill" type="button" data-val="location">Location</button>
+          <button class="pill" type="button" data-val="session_type">Session type</button>
+          <button class="pill" type="button" data-val="budget">Budget range</button>
+          <button class="pill" type="button" data-val="how_found">How they found you</button>
+          <button class="pill" type="button" data-val="message">Open message box</button>
+        </div>
+        <span class="hint" style="margin-top:10px;">Name and email are always there.</span>
+      </div>
+
+      <div class="field">
+        <label>Anything else specific you want asked?</label>
+        <textarea data-key="form_extra" rows="2" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>Your auto-reply, in your voice</label>
+        <span class="hint">A few lines so they know you got it. Rough draft is plenty.</span>
+        <textarea data-key="auto_reply" rows="4" placeholder="Thank you for reaching out — I…"></textarea>
+      </div>
+
+      <div class="field">
+        <label>How fast you commit to responding</label>
+        <div class="pill-group" data-pill-key="response_time">
+          <button class="pill" type="button" data-val="24h">Within 24 hours</button>
+          <button class="pill" type="button" data-val="48h">Within 48 hours</button>
+          <button class="pill" type="button" data-val="3d">Within 3 days</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── 8 — FAQS ───────── -->
+    <section class="step" data-step="8">
+      <div class="step-num">Eight</div>
+      <h1>The questions you <em>get asked</em></h1>
+      <p class="lead">If you've answered the same one three times in DMs, it belongs here.</p>
+      <div class="story">FAQs aren't customer service. They're a chance to be funny, warm, and clear in a way nothing else on the site can be. The more "you" the answers sound, the more they convert. Skip the corporate voice — write like you'd text a friend.</div>
+
+      <div class="field">
+        <label>Up to five questions and answers</label>
+        <span class="hint">Format any way that works — Q on one line, A on the next, or just write them as a list.</span>
+        <textarea data-key="faqs" rows="10" placeholder="Q: How long until I get my photos?&#10;A: Around six weeks. I edit every image by hand and I'd rather give you the strongest gallery than the fastest one."></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 9 — PRAISE ───────── -->
+    <section class="step" data-step="9">
+      <div class="step-num">Nine</div>
+      <h1>What people <em>say about you</em></h1>
+      <p class="lead">Real words from real clients carry more weight than any tagline.</p>
+      <div class="story">A screenshot of a sweet text from a bride is enough — we'll set it. The shorter and more specific the testimonial, the more it lands. "She made my mom feel beautiful for the first time in twenty years" beats "highly recommend!!" every time.</div>
+
+      <div class="field">
+        <label>Three to seven testimonials</label>
+        <span class="hint">Quote, name, occasion. We'll format.</span>
+        <textarea data-key="testimonials" rows="8" placeholder='"Kylie made our wedding day feel like a dream we got to live twice." — Sarah & Tom, August 2024'></textarea>
+      </div>
+
+      <div class="field">
+        <label>Press, features, publications</label>
+        <span class="hint">Anywhere your work has been written up — with links if you have them.</span>
+        <textarea data-key="press" rows="3" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>Notable venues, planners, brands</label>
+        <span class="hint">Only if it adds gravity.</span>
+        <textarea data-key="notable" rows="2" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 10 — YES / NO ───────── -->
+    <section class="step" data-step="10">
+      <div class="step-num">Ten</div>
+      <h1>What you <em>want</em>, and <em>don't</em></h1>
+      <p class="lead">Saying what you don't want is often the fastest path to what you do.</p>
+      <div class="story">You'll be surprised how clarifying it is to write down the things you hate. Every "no" you say here makes the design sharper. The bad photographer websites are bad because nobody told them what they didn't want.</div>
+
+      <div class="field">
+        <label>Yes, please — pick anything you want on the site</label>
+        <div class="pill-group" data-pill-key="yes_features" data-multi="true">
+          <button class="pill" type="button" data-val="journal">Journal / blog</button>
+          <button class="pill" type="button" data-val="gallery">Private client gallery</button>
+          <button class="pill" type="button" data-val="shop">Print shop</button>
+          <button class="pill" type="button" data-val="newsletter">Newsletter signup</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Anything else you've been dreaming about?</label>
+        <textarea data-key="dream_features" rows="2" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>No, thanks — things that should never be on your site</label>
+        <span class="hint">Autoplay music, video backgrounds, popups, heavy animation — name them.</span>
+        <textarea data-key="no_features" rows="2" placeholder=""></textarea>
+      </div>
+
+      <div class="field">
+        <label>Words and phrases that make you cringe</label>
+        <span class="hint">"Capturing memories," "timeless," "storyteller" — name what you never want on your site.</span>
+        <textarea data-key="cringe_words" rows="2" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 11 — WHEN ───────── -->
+    <section class="step" data-step="11">
+      <div class="step-num">Eleven</div>
+      <h1><em>When</em></h1>
+      <p class="lead">A real date — even a soft one — is the difference between "someday" and "happening."</p>
+      <div class="story">Pick the date that scares you a little. The one that makes you feel like you have to actually finish your part. Deadlines are gifts — they protect the project from drifting.</div>
+
+      <div class="field">
+        <label>Soft launch date you'd love to hit</label>
+        <input type="date" data-key="launch_date" />
+      </div>
+      <div class="field">
+        <label>Anything you're working backwards from</label>
+        <span class="hint">A season, a press piece, a wedding on the books, a launch.</span>
+        <textarea data-key="backwards_from" rows="2" placeholder=""></textarea>
+      </div>
+      <div class="field">
+        <label>Anything that would make this feel rushed in a bad way</label>
+        <textarea data-key="rushed_concerns" rows="2" placeholder=""></textarea>
+      </div>
+    </section>
+
+    <!-- ───────── 12 — DONE ───────── -->
+    <section class="step" data-step="12">
+      <div class="step-num">Done</div>
+      <h1>Look at <em>that</em>.</h1>
+      <p class="done-mark">You did it, my love.</p>
+      <p class="lead">Look how clear that already is. Send it over and we'll start building. You can always come back and add more — your answers are saved on this device.</p>
+
+      <div class="field">
+        <label>Anything else you want to say before sending?</label>
+        <textarea data-key="final_note" rows="3" placeholder="A last thought, a wish, anything."></textarea>
+      </div>
+
+      <div class="summary" id="summary"></div>
+
+      <div class="actions-grid">
+        <button class="btn btn-primary" id="btn-email">Send to Nadim</button>
+        <button class="btn btn-link" id="btn-copy">Copy everything to clipboard</button>
+        <button class="btn btn-link" id="btn-download">Download as a text file</button>
+        <button class="btn btn-ghost" id="btn-reset">Start over (clears saved answers)</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="nav">
+    <button class="btn btn-ghost" id="back">← Back</button>
+    <span class="hint-key" id="autosave">Autosaved</span>
+    <button class="btn btn-primary" id="next">Continue</button>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  const KEY = 'kylie-blue-brief-v1';
+  const TOTAL = 12;
+  const NADIM_EMAIL = 'nadim@ukani.net';
+
+  // ───── state ─────
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { state = {}; }
+  state.step = state.step ?? 0;
+  state.fields = state.fields ?? {};
+  state.bins = state.bins ?? {}; // { binName: [{name, dataUrl}] }
+  state.pills = state.pills ?? {};
+
+  const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+
+  // ───── elements ─────
+  const stage = document.getElementById('stage');
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const progFill = document.getElementById('progress-fill');
+  const cur = document.getElementById('cur');
+  const total = document.getElementById('total');
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  total.textContent = TOTAL;
+
+  // ───── render ─────
+  function setStep(n) {
+    n = Math.max(0, Math.min(TOTAL, n));
+    state.step = n;
+    save();
+    steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+    cur.textContent = n + 1;
+    progFill.style.width = ((n) / TOTAL * 100) + '%';
+    back.disabled = n === 0;
+    next.textContent = n === TOTAL ? 'You did it' : (n === 0 ? 'Begin →' : 'Continue →');
+    next.disabled = n === TOTAL;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (n === TOTAL) renderSummary();
+  }
+
+  back.addEventListener('click', () => setStep(state.step - 1));
+  next.addEventListener('click', () => setStep(state.step + 1));
+
+  document.addEventListener('keydown', (e) => {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    const inField = tag === 'INPUT' || tag === 'TEXTAREA';
+    if (e.key === 'Enter' && !e.shiftKey && !inField) {
+      e.preventDefault();
+      if (state.step < TOTAL) setStep(state.step + 1);
+    }
+  });
+
+  // ───── fields wiring ─────
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const k = el.dataset.key;
+    if (state.fields[k] !== undefined) el.value = state.fields[k];
+    autoGrow(el);
+    el.addEventListener('input', () => {
+      state.fields[k] = el.value;
+      save();
+      autoGrow(el);
+      flashAutosave();
+    });
+  });
+
+  function autoGrow(el) {
+    if (el.tagName !== 'TEXTAREA') return;
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }
+
+  // ───── pills (radio + multi) ─────
+  document.querySelectorAll('[data-pill-key]').forEach(group => {
+    const k = group.dataset.pillKey;
+    const multi = group.dataset.multi === 'true';
+    const initial = state.pills[k];
+    if (initial) {
+      group.querySelectorAll('.pill').forEach(p => {
+        const v = p.dataset.val;
+        if (multi ? (Array.isArray(initial) && initial.includes(v)) : initial === v) {
+          p.classList.add('on');
+        }
+      });
+    }
+    group.querySelectorAll('.pill').forEach(p => {
+      p.addEventListener('click', () => {
+        const v = p.dataset.val;
+        if (multi) {
+          const cur = Array.isArray(state.pills[k]) ? state.pills[k] : [];
+          if (cur.includes(v)) {
+            state.pills[k] = cur.filter(x => x !== v);
+            p.classList.remove('on');
+          } else {
+            state.pills[k] = [...cur, v];
+            p.classList.add('on');
+          }
+        } else {
+          state.pills[k] = v;
+          group.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
+          p.classList.add('on');
+        }
+        save();
+        flashAutosave();
+      });
+    });
+  });
+
+  // ───── uploads ─────
+  document.querySelectorAll('input[type=file][data-bin]').forEach(input => {
+    const bin = input.dataset.bin;
+    const wrap = input.closest('.upload');
+    const thumbs = document.getElementById('thumbs-' + bin);
+    if (!state.bins[bin]) state.bins[bin] = [];
+    renderThumbs(bin);
+
+    input.addEventListener('change', (e) => handleFiles(e.target.files, bin));
+
+    wrap.addEventListener('dragover', (e) => { e.preventDefault(); wrap.classList.add('dragover'); });
+    wrap.addEventListener('dragleave', () => wrap.classList.remove('dragover'));
+    wrap.addEventListener('drop', (e) => {
+      e.preventDefault();
+      wrap.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files, bin);
+    });
+  });
+
+  async function handleFiles(files, bin) {
+    const arr = Array.from(files);
+    const single = (bin === 'hero' || bin === 'headshot');
+    if (single) state.bins[bin] = [];
+    for (const f of arr) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        const dataUrl = await resizeImage(f, 800);
+        state.bins[bin].push({ name: f.name, dataUrl });
+        if (single) break;
+      } catch (err) {
+        console.warn('skip', f.name, err);
+      }
+    }
+    save();
+    renderThumbs(bin);
+    flashAutosave();
+  }
+
+  function renderThumbs(bin) {
+    const thumbs = document.getElementById('thumbs-' + bin);
+    if (!thumbs) return;
+    thumbs.innerHTML = '';
+    (state.bins[bin] || []).forEach((item, i) => {
+      const t = document.createElement('div');
+      t.className = 'thumb';
+      t.style.backgroundImage = `url(${item.dataUrl})`;
+      const x = document.createElement('span');
+      x.className = 'x';
+      x.textContent = '×';
+      x.title = 'Remove';
+      x.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.bins[bin].splice(i, 1);
+        save();
+        renderThumbs(bin);
+      });
+      t.appendChild(x);
+      thumbs.appendChild(t);
+    });
+  }
+
+  function resizeImage(file, maxDim) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const ratio = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.round(img.width * ratio);
+          const h = Math.round(img.height * ratio);
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(c.toDataURL('image/jpeg', 0.82));
+        };
+        img.onerror = reject;
+        img.src = fr.result;
+      };
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  // ───── autosave flash ─────
+  let flashT;
+  const autosaveEl = document.getElementById('autosave');
+  function flashAutosave() {
+    autosaveEl.style.opacity = 0.4;
+    autosaveEl.textContent = 'Saving…';
+    clearTimeout(flashT);
+    flashT = setTimeout(() => {
+      autosaveEl.style.opacity = 1;
+      autosaveEl.textContent = 'Saved';
+      setTimeout(() => { autosaveEl.textContent = 'Autosaved'; }, 1200);
+    }, 350);
+  }
+
+  // ───── summary / export ─────
+  const LABELS = {
+    one_sentence: 'Your one sentence',
+    photo_words: 'Three words for your photography',
+    site_words: 'Three words for the website',
+    dream_client: 'Dream client',
+    no_work: 'Work you don\'t want',
+    biz_name: 'Business name',
+    ig: 'Instagram',
+    other_handles: 'Other handles',
+    public_email: 'Public email',
+    ref_sites: 'Reference photographer sites',
+    ref_outside: 'Outside-photography references',
+    ref_anti: 'Anti-references',
+    color_word: 'Color',
+    portfolio_link: 'Portfolio link',
+    categories: 'Categories',
+    story_why: 'Why she started shooting',
+    story_feel: 'What it feels like to be photographed by her',
+    story_legacy: 'Legacy / 10-year feeling',
+    story_personal: 'Personal details',
+    story_credits: 'Credits / features',
+    packages: 'Packages',
+    travel_deposit: 'Travel + deposit',
+    addons: 'Add-ons',
+    form_extra: 'Form: extra fields',
+    auto_reply: 'Auto-reply',
+    faqs: 'FAQs',
+    testimonials: 'Testimonials',
+    press: 'Press',
+    notable: 'Notable clients',
+    dream_features: 'Other features wanted',
+    no_features: 'Things never on the site',
+    cringe_words: 'Cringe words',
+    launch_date: 'Launch date',
+    backwards_from: 'Working backwards from',
+    rushed_concerns: 'Concerns about timing',
+    final_note: 'Final note',
+  };
+  const PILL_LABELS = {
+    type_pref: 'Type preference',
+    pricing_style: 'Pricing style',
+    form_fields: 'Form fields',
+    response_time: 'Response time',
+    yes_features: 'Yes-features',
+  };
+
+  function buildText() {
+    const lines = [];
+    lines.push('KYLIE BLUE — WEBSITE BRIEF');
+    lines.push('Filled out: ' + new Date().toLocaleString());
+    lines.push('');
+    for (const k in LABELS) {
+      const v = state.fields[k];
+      if (v && v.trim()) {
+        lines.push(LABELS[k] + ':');
+        lines.push(v.trim());
+        lines.push('');
+      }
+    }
+    for (const k in PILL_LABELS) {
+      const v = state.pills[k];
+      if (v && (Array.isArray(v) ? v.length : true)) {
+        lines.push(PILL_LABELS[k] + ': ' + (Array.isArray(v) ? v.join(', ') : v));
+        lines.push('');
+      }
+    }
+    const counts = [];
+    Object.keys(state.bins).forEach(b => {
+      const n = (state.bins[b] || []).length;
+      if (n) counts.push(`${b}: ${n} image${n>1?'s':''}`);
+    });
+    if (counts.length) {
+      lines.push('Uploaded images:');
+      counts.forEach(c => lines.push('  - ' + c));
+      lines.push('(Images are saved on her device — she\'ll send hi-res via the portfolio link.)');
+    }
+    return lines.join('\n');
+  }
+
+  function renderSummary() {
+    document.getElementById('summary').textContent = buildText();
+  }
+
+  document.getElementById('btn-email').addEventListener('click', async (e) => {
+    const btn = e.target;
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    const text = buildText();
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/' + NADIM_EMAIL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Kylie Blue — Website Brief',
+          _template: 'box',
+          _captcha: 'false',
+          name: state.fields.biz_name || 'Kylie',
+          message: text,
+        }),
+      });
+      if (res.ok) {
+        btn.textContent = 'Sent — Nadim has it ✓';
+        btn.style.background = 'var(--accent)';
+        setTimeout(() => { btn.disabled = false; btn.textContent = original; btn.style.background = ''; }, 4000);
+        return;
+      }
+      throw new Error('formsubmit failed');
+    } catch (err) {
+      btn.textContent = 'Opening your mail app…';
+      const body = encodeURIComponent(text);
+      const subject = encodeURIComponent('Kylie Blue — Website Brief');
+      window.location.href = `mailto:${NADIM_EMAIL}?subject=${subject}&body=${body}`;
+      setTimeout(() => { btn.disabled = false; btn.textContent = original; }, 2500);
+    }
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', async (e) => {
+    try {
+      await navigator.clipboard.writeText(buildText());
+      e.target.textContent = 'Copied — paste it anywhere';
+      setTimeout(() => { e.target.textContent = 'Copy everything to clipboard'; }, 2000);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = buildText();
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      e.target.textContent = 'Copied';
+    }
+  });
+
+  document.getElementById('btn-download').addEventListener('click', () => {
+    const blob = new Blob([buildText()], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Kylie-Blue-Website-Brief.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('Clear every answer? This can\'t be undone.')) return;
+    localStorage.removeItem(KEY);
+    location.reload();
+  });
+
+  // ───── boot ─────
+  setStep(state.step);
+})();
+</script>
+
+</body>
+</html>
