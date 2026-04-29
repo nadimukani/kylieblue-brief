@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kylie Blue — Brief Dashboard</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:    #F2EBE0;
+    --paper-2:  #ECE3D5;
+    --ink:      #1C1A18;
+    --ink-2:    #2F3F4D;
+    --soft:     #7A6F63;
+    --hair:     #D9CFC2;
+    --accent:   #4A6B85;
+    --accent-2: #6E8AA3;
+    --good:     #4A7B5A;
+    --serif:    'Fraunces', Georgia, serif;
+    --sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    --mono:     'JetBrains Mono', ui-monospace, 'Menlo', monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px; }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 32px;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .brand em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .meta-line {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--soft);
+  }
+  .meta-line .live {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--good);
+    animation: pulse 2s ease-in-out infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  .empty {
+    padding: 80px 0;
+    text-align: center;
+    color: var(--soft);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+  }
+
+  .session-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .session {
+    background: var(--paper-2);
+    border-radius: 6px;
+    padding: 24px 28px;
+    border-left: 3px solid var(--hair);
+    transition: border-color 0.3s ease;
+  }
+  .session.submitted { border-left-color: var(--good); }
+  .session.in-progress { border-left-color: var(--accent); }
+
+  .session-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .session-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--ink);
+    flex: 1;
+    min-width: 200px;
+  }
+  .session-status {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .status-progress {
+    background: var(--accent);
+    color: var(--paper);
+  }
+  .status-submitted {
+    background: var(--good);
+    color: var(--paper);
+  }
+
+  .session-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--soft);
+    margin-bottom: 18px;
+  }
+  .session-meta span { display: inline-flex; align-items: center; gap: 6px; }
+  .session-meta strong { color: var(--ink); font-weight: 600; }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--hair);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .progress-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+  .session.submitted .progress-bar > span { background: var(--good); }
+
+  .answers {
+    margin-top: 12px;
+    border-top: 1px solid var(--hair);
+    padding-top: 16px;
+    display: none;
+  }
+  .session.open .answers { display: block; }
+
+  .toggle {
+    background: transparent;
+    border: 1px solid var(--hair);
+    color: var(--soft);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.04em;
+  }
+  .toggle:hover { color: var(--ink); border-color: var(--accent); }
+
+  .qa { margin: 0 0 14px; }
+  .qa .q {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--soft);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .qa .a {
+    font-family: var(--serif);
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+
+  pre.raw {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.55;
+    background: var(--paper);
+    padding: 14px 16px;
+    border-radius: 4px;
+    overflow-x: auto;
+    color: var(--ink-2);
+    margin-top: 12px;
+    border: 1px solid var(--hair);
+  }
+
+  .auth-prompt {
+    max-width: 460px;
+    margin: 80px auto;
+    padding: 32px;
+    text-align: center;
+    background: var(--paper-2);
+    border-radius: 6px;
+  }
+  .auth-prompt h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 28px;
+    margin: 0 0 16px;
+  }
+  .auth-prompt p { color: var(--soft); }
+  .auth-prompt input {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: var(--mono);
+    font-size: 14px;
+    border: 1px solid var(--hair);
+    background: var(--paper);
+    border-radius: 4px;
+    margin-top: 12px;
+  }
+  .auth-prompt button {
+    margin-top: 12px;
+    padding: 12px 24px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  footer.bottom {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    font-size: 12px;
+    color: var(--soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer.bottom a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  footer.bottom a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 20px; }
+    .brand { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="wrap"></div>
+
+<script>
+const FIELD_LABELS = {
+  one_sentence: 'Her one sentence',
+  photo_words: 'Three words for her photography',
+  site_words: 'Three words for the site feel',
+  dream_client: 'Dream client',
+  no_work: 'Work she doesn\'t want',
+  biz_name: 'Business name',
+  ig: 'Instagram',
+  other_handles: 'Other handles',
+  public_email: 'Public email',
+  ref_sites: 'Reference photographer sites',
+  ref_outside: 'Outside-photography references',
+  ref_anti: 'Anti-references',
+  color_word: 'Color',
+  portfolio_link: 'Portfolio link',
+  categories: 'Categories',
+  story_why: 'Why she started shooting',
+  story_feel: 'Feel of being photographed by her',
+  story_legacy: 'Ten-year feeling',
+  story_personal: 'Personal details',
+  story_credits: 'Credits / features',
+  packages: 'Packages',
+  travel_deposit: 'Travel + deposit',
+  addons: 'Add-ons',
+  form_extra: 'Inquiry form extras',
+  auto_reply: 'Auto-reply',
+  faqs: 'FAQs',
+  testimonials: 'Testimonials',
+  press: 'Press',
+  notable: 'Notable clients',
+  dream_features: 'Dream features',
+  no_features: 'No-features',
+  cringe_words: 'Cringe words',
+  launch_date: 'Launch date',
+  backwards_from: 'Working backwards from',
+  rushed_concerns: 'Rushed concerns',
+  final_note: 'Final note',
+};
+const PILL_LABELS = {
+  type_pref: 'Type preference',
+  pricing_style: 'Pricing style',
+  form_fields: 'Form fields',
+  response_time: 'Response time',
+  yes_features: 'Yes-features',
+};
+
+function getBucket() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  return h.get('k') || localStorage.getItem('kvdb-bucket') || '';
+}
+function setBucket(b) {
+  localStorage.setItem('kvdb-bucket', b);
+  location.hash = 'k=' + b;
+}
+
+function fmtRelative(iso) {
+  if (!iso) return '—';
+  const t = new Date(iso).getTime();
+  const now = Date.now();
+  const diff = (now - t) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hr ago';
+  return Math.floor(diff / 86400) + ' days ago';
+}
+
+function escapeHTML(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function loadSessions(bucket) {
+  const r = await fetch(`https://kvdb.io/${bucket}/?format=json&prefix=s-`);
+  if (!r.ok) throw new Error('fetch list failed');
+  const keys = await r.json();
+  if (!Array.isArray(keys) || !keys.length) return [];
+  const sessions = await Promise.all(
+    keys.map(async (entry) => {
+      const k = Array.isArray(entry) ? entry[0] : entry;
+      try {
+        const v = await fetch(`https://kvdb.io/${bucket}/${k}`);
+        if (!v.ok) return null;
+        const txt = await v.text();
+        return JSON.parse(txt);
+      } catch { return null; }
+    })
+  );
+  return sessions.filter(Boolean).sort((a, b) => {
+    const ta = new Date(a.updated_at || a.started_at || 0).getTime();
+    const tb = new Date(b.updated_at || b.started_at || 0).getTime();
+    return tb - ta;
+  });
+}
+
+function renderSessions(sessions) {
+  const wrap = document.getElementById('wrap');
+  if (!sessions.length) {
+    wrap.innerHTML += `
+      <div class="empty">
+        Nothing yet. The first checkpoint will land here as soon as Kylie answers her first question.
+      </div>`;
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'session-grid';
+
+  sessions.forEach((s) => {
+    const isSub = !!s.submitted;
+    const card = document.createElement('div');
+    card.className = 'session ' + (isSub ? 'submitted' : 'in-progress');
+    const pct = Math.round(((s.completed_step || 0) / (s.total_steps || 11)) * 100);
+    const fieldsCount = Object.values(s.fields || {}).filter(v => v && String(v).trim()).length;
+    const uploads = s.uploads || {};
+    const uploadsTotal = Object.values(uploads).reduce((a, b) => a + b, 0);
+
+    card.innerHTML = `
+      <div class="session-head">
+        <div class="session-name">${escapeHTML(s.name || 'Anonymous session')}</div>
+        <span class="session-status ${isSub ? 'status-submitted' : 'status-progress'}">
+          ${isSub ? 'Submitted' : 'In progress'}
+        </span>
+      </div>
+      <div class="session-meta">
+        <span><strong>Step ${s.completed_step || 0}</strong> of ${s.total_steps || 11}</span>
+        <span><strong>${fieldsCount}</strong> fields filled</span>
+        <span><strong>${uploadsTotal}</strong> images attached</span>
+        <span>updated <strong>${fmtRelative(s.updated_at)}</strong></span>
+        <span>started <strong>${fmtRelative(s.started_at)}</strong></span>
+      </div>
+      <div class="progress-bar"><span style="width:${pct}%"></span></div>
+      <button class="toggle">View answers ↓</button>
+      <div class="answers"></div>
+    `;
+
+    const ansEl = card.querySelector('.answers');
+    let qaHtml = '';
+    for (const k in FIELD_LABELS) {
+      const v = (s.fields || {})[k];
+      if (v && String(v).trim()) {
+        qaHtml += `<div class="qa"><div class="q">${FIELD_LABELS[k]}</div><div class="a">${escapeHTML(v)}</div></div>`;
+      }
+    }
+    for (const k in PILL_LABELS) {
+      const v = (s.pills || {})[k];
+      if (v && (Array.isArray(v) ? v.length : true)) {
+        qaHtml += `<div class="qa"><div class="q">${PILL_LABELS[k]}</div><div class="a">${escapeHTML(Array.isArray(v) ? v.join(', ') : v)}</div></div>`;
+      }
+    }
+    if (uploadsTotal) {
+      const counts = Object.entries(uploads).filter(([_, n]) => n).map(([b, n]) => `${b}: ${n}`).join(' · ');
+      qaHtml += `<div class="qa"><div class="q">Uploads (preview-only on her device)</div><div class="a">${escapeHTML(counts)}</div></div>`;
+    }
+    ansEl.innerHTML = qaHtml || '<p style="color:var(--soft);font-style:italic;">She hasn\'t typed anything yet.</p>';
+
+    const toggle = card.querySelector('.toggle');
+    toggle.addEventListener('click', () => {
+      card.classList.toggle('open');
+      toggle.textContent = card.classList.contains('open') ? 'Hide answers ↑' : 'View answers ↓';
+    });
+
+    grid.appendChild(card);
+  });
+
+  wrap.appendChild(grid);
+}
+
+function renderHeader(bucket, count) {
+  const wrap = document.getElementById('wrap');
+  wrap.innerHTML = `
+    <header class="top">
+      <div class="brand">Kylie <em>Blue</em> — Brief Dashboard</div>
+      <div class="meta-line"><span class="live"></span>Live · ${count} session${count === 1 ? '' : 's'} · refreshes every 30s</div>
+    </header>
+  `;
+}
+
+function renderFooter(bucket) {
+  const wrap = document.getElementById('wrap');
+  const f = document.createElement('footer');
+  f.className = 'bottom';
+  f.innerHTML = `
+    <span>Bucket: <span style="font-family:var(--mono);font-size:11px;">${bucket.slice(0, 8)}…</span></span>
+    <span><a href="./" target="_blank">Open the brief Kylie sees →</a></span>
+  `;
+  wrap.appendChild(f);
+}
+
+async function refresh() {
+  const bucket = getBucket();
+  if (!bucket) return showAuth();
+  setBucket(bucket);
+  try {
+    const sessions = await loadSessions(bucket);
+    renderHeader(bucket, sessions.length);
+    renderSessions(sessions);
+    renderFooter(bucket);
+  } catch (err) {
+    document.getElementById('wrap').innerHTML = `
+      <header class="top">
+        <div class="brand">Kylie <em>Blue</em> — Brief Dashboard</div>
+        <div class="meta-line">Connection issue</div>
+      </header>
+      <div class="empty">Couldn't reach the data store. Retrying in 30s.<br><br><span style="font-size:13px;">${escapeHTML(err.message)}</span></div>
+    `;
+  }
+}
+
+function showAuth() {
+  document.getElementById('wrap').innerHTML = `
+    <div class="auth-prompt">
+      <h2>Add your bucket key</h2>
+      <p>Paste the kvdb.io bucket id to view Kylie's progress. The URL with the key is your private dashboard — bookmark it.</p>
+      <input id="bk" placeholder="bucket id" autofocus />
+      <br>
+      <button onclick="onAuthSubmit()">Open dashboard</button>
+    </div>
+  `;
+}
+
+window.onAuthSubmit = function() {
+  const v = document.getElementById('bk').value.trim();
+  if (!v) return;
+  location.hash = 'k=' + v;
+  refresh();
+};
+
+// initial + auto-refresh
+refresh();
+setInterval(refresh, 30000);
+</script>
+
+</body>
+</html>

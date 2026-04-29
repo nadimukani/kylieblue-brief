@@ -864,6 +864,8 @@
   const KEY = 'kylie-blue-brief-v1';
   const TOTAL = 12;
   const NADIM_EMAIL = 'nadim@ukani.net';
+  const KVDB_BUCKET = 'SxYYDtephy5d1pfcNkqarV';
+  const KVDB_BASE = 'https://kvdb.io/' + KVDB_BUCKET;
 
   // ───── state ─────
   let state = {};
@@ -872,6 +874,10 @@
   state.fields = state.fields ?? {};
   state.bins = state.bins ?? {}; // { binName: [{name, dataUrl}] }
   state.pills = state.pills ?? {};
+  if (!state.session_id) {
+    state.session_id = 's-' + (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
+  }
+  state.started_at = state.started_at || new Date().toISOString();
 
   const save = () => localStorage.setItem(KEY, JSON.stringify(state));
 
@@ -910,26 +916,59 @@
     }
   });
 
-  // ───── progress checkpoint (fires on each forward Continue) ─────
+  // ───── progress checkpoint (writes cumulative state to kvdb on each forward Continue) ─────
   let lastCheckpointHash = '';
   async function sendProgressCheckpoint(completedStep) {
-    const text = buildText();
-    const hash = completedStep + '|' + text.length + '|' + text.slice(0, 200);
+    const payload = {
+      session_id: state.session_id,
+      started_at: state.started_at,
+      updated_at: new Date().toISOString(),
+      completed_step: completedStep,
+      total_steps: TOTAL - 1,
+      submitted: false,
+      name: state.fields.biz_name || state.fields.one_sentence?.slice(0, 60) || 'Anonymous session',
+      fields: state.fields,
+      pills: state.pills,
+      uploads: Object.fromEntries(
+        Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
+      ),
+      summary: buildText(),
+    };
+    const hash = completedStep + '|' + JSON.stringify(payload.fields).length;
     if (hash === lastCheckpointHash) return;
     lastCheckpointHash = hash;
     try {
-      await fetch('https://formsubmit.co/ajax/' + NADIM_EMAIL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          _subject: `[Kylie ${completedStep}/11] Brief progress`,
-          _template: 'box',
-          _captcha: 'false',
-          name: state.fields.biz_name || 'Kylie',
-          message: `She just finished step ${completedStep} of 11. Cumulative state below.\n\n${text}`,
-        }),
+      await fetch(KVDB_BASE + '/' + state.session_id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
     } catch (err) { /* fail silent — final submit is the source of truth */ }
+  }
+  async function markSubmitted() {
+    try {
+      const payload = {
+        session_id: state.session_id,
+        started_at: state.started_at,
+        updated_at: new Date().toISOString(),
+        completed_step: TOTAL - 1,
+        total_steps: TOTAL - 1,
+        submitted: true,
+        submitted_at: new Date().toISOString(),
+        name: state.fields.biz_name || 'Kylie',
+        fields: state.fields,
+        pills: state.pills,
+        uploads: Object.fromEntries(
+          Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
+        ),
+        summary: buildText(),
+      };
+      await fetch(KVDB_BASE + '/' + state.session_id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) { /* silent */ }
   }
 
   document.addEventListener('keydown', (e) => {
@@ -1183,6 +1222,7 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
     const text = buildText();
+    markSubmitted();
     try {
       const res = await fetch('https://formsubmit.co/ajax/' + NADIM_EMAIL, {
         method: 'POST',
