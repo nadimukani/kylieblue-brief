@@ -901,7 +901,36 @@
   }
 
   back.addEventListener('click', () => setStep(state.step - 1));
-  next.addEventListener('click', () => setStep(state.step + 1));
+  next.addEventListener('click', () => {
+    const goingForward = state.step < TOTAL;
+    const fromStep = state.step;
+    setStep(state.step + 1);
+    if (goingForward && fromStep > 0 && fromStep < TOTAL) {
+      sendProgressCheckpoint(fromStep);
+    }
+  });
+
+  // ───── progress checkpoint (fires on each forward Continue) ─────
+  let lastCheckpointHash = '';
+  async function sendProgressCheckpoint(completedStep) {
+    const text = buildText();
+    const hash = completedStep + '|' + text.length + '|' + text.slice(0, 200);
+    if (hash === lastCheckpointHash) return;
+    lastCheckpointHash = hash;
+    try {
+      await fetch('https://formsubmit.co/ajax/' + NADIM_EMAIL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[Kylie ${completedStep}/11] Brief progress`,
+          _template: 'box',
+          _captcha: 'false',
+          name: state.fields.biz_name || 'Kylie',
+          message: `She just finished step ${completedStep} of 11. Cumulative state below.\n\n${text}`,
+        }),
+      });
+    } catch (err) { /* fail silent — final submit is the source of truth */ }
+  }
 
   document.addEventListener('keydown', (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || '';
