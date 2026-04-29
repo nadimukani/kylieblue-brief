@@ -12,11 +12,11 @@
   :root {
     --paper:    #F2EBE0;
     --paper-2:  #ECE3D5;
-    --ink:      #1C1A18;
-    --ink-2:    #2F3F4D;
-    --soft:     #7A6F63;
+    --ink:      #1A1816;
+    --ink-2:    #2A3845;
+    --soft:     #6B6055;
     --hair:     #D9CFC2;
-    --accent:   #4A6B85;
+    --accent:   #3F5E78;
     --accent-2: #6E8AA3;
     --serif:    'Fraunces', Georgia, serif;
     --sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
@@ -29,8 +29,8 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.65;
+    font-size: 17px;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
@@ -146,15 +146,16 @@
   .story {
     background: var(--paper-2);
     border-left: 2px solid var(--accent);
-    padding: 18px 22px;
-    margin: 0 0 36px;
+    padding: 22px 26px;
+    margin: 0 0 40px;
     font-family: var(--serif);
     font-style: italic;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.6;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.65;
     color: var(--ink-2);
-    max-width: 600px;
+    max-width: 580px;
+    border-radius: 0 4px 4px 0;
   }
 
   /* ───────── FIELDS ───────── */
@@ -163,9 +164,10 @@
   }
   .field label {
     display: block;
-    font-family: var(--sans);
-    font-weight: 500;
-    font-size: 14px;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.45;
     color: var(--ink);
     margin-bottom: 8px;
   }
@@ -173,9 +175,10 @@
     display: block;
     font-family: var(--serif);
     font-style: italic;
-    font-size: 14px;
+    font-size: 15.5px;
+    line-height: 1.55;
     color: var(--soft);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     max-width: 580px;
   }
   .field input[type="text"],
@@ -187,11 +190,11 @@
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--hair);
-    padding: 10px 0;
+    padding: 12px 0;
     font-family: var(--serif);
-    font-weight: 300;
-    font-size: 17px;
-    line-height: 1.55;
+    font-weight: 400;
+    font-size: 18.5px;
+    line-height: 1.6;
     color: var(--ink);
     resize: none;
     outline: none;
@@ -418,25 +421,78 @@
 
   /* ───────── INTRO COVER ───────── */
   .cover-wrap {
-    padding-top: 12vh;
-    padding-bottom: 32px;
+    padding-top: 8vh;
+    padding-bottom: 40px;
+  }
+  .cover-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    margin: 0 0 28px;
   }
   .cover-wrap h1 {
-    font-size: clamp(64px, 13vw, 128px);
-    margin-bottom: 24px;
+    font-size: clamp(72px, 14vw, 152px);
+    margin-bottom: 20px;
+    letter-spacing: -0.04em;
+    font-variation-settings: "opsz" 144;
+  }
+  .cover-deck {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(20px, 2.4vw, 26px);
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 480px;
+    margin: 0 0 48px;
+    font-variation-settings: "opsz" 96;
+  }
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0 36px;
+    max-width: 520px;
+  }
+  .ornament .line {
+    flex: 1;
+    height: 1px;
+    background: var(--hair);
+  }
+  .ornament .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
   }
   .letter {
     font-family: var(--serif);
-    font-weight: 300;
-    font-size: 18px;
-    line-height: 1.7;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.75;
     color: var(--ink);
-    max-width: 560px;
-    margin: 28px 0;
+    max-width: 540px;
+    margin: 0 0 32px;
   }
-  .letter p { margin: 0 0 16px; }
+  .letter p { margin: 0 0 18px; }
+  .letter p:first-child {
+    font-size: 21px;
+    color: var(--ink);
+    margin-bottom: 22px;
+  }
   .letter p.aside {
     font-style: italic;
+    color: var(--soft);
+    font-size: 17px;
+  }
+  .cover-end {
+    margin-top: 36px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
     color: var(--soft);
   }
 
@@ -484,15 +540,20 @@
 
     <!-- ───────── 0 — COVER / LETTER ───────── -->
     <section class="step active cover-wrap" data-step="0">
+      <p class="cover-eyebrow">a love letter, and a few questions</p>
       <h1>For<br><em>Kylie</em></h1>
+      <p class="cover-deck">A handful of soft questions to help us build your website. No rush, no rules.</p>
+
+      <div class="ornament"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
+
       <div class="letter">
         <p>Hi my love,</p>
         <p>This isn't a form. There's no right answer — a word, a screenshot, a feeling is enough. Skip what doesn't speak to you. Come back to it whenever you want.</p>
         <p>You can leave any time. Your answers stay safe right here, waiting for you. Nothing is permanent. Nothing is graded.</p>
-        <p>By the time you finish, you're going to feel clearer about your work than you have in months. Promise.</p>
         <p class="aside">Take your time. This is going to be beautiful — like you.</p>
       </div>
-      <p class="hint-key">Press <kbd>↵</kbd> to begin.</p>
+
+      <p class="cover-end">Whenever you're ready.</p>
     </section>
 
     <!-- ───────── 1 — IDENTITY ───────── -->
@@ -503,32 +564,32 @@
       <div class="story">Picture your favorite photo you've ever taken. The light, the moment, the person in it. Hold it in your head and answer with that photo as your witness — your answers will be truer.</div>
 
       <div class="field">
-        <label>Your one sentence</label>
-        <span class="hint">"I'm a [city] [type] photographer who [the thing that makes you, you]."</span>
+        <label>If you had to say what you do in one sentence</label>
+        <span class="hint">"I'm a [city] [type] photographer who [the thing that makes you, you]." Use your real voice.</span>
         <input type="text" data-key="one_sentence" placeholder="I'm a Nashville wedding photographer who…" />
       </div>
 
       <div class="field">
-        <label>Three words for your photography</label>
-        <span class="hint">Not what sounds nice — what's true.</span>
+        <label>Three words for the way you shoot</label>
+        <span class="hint">Not what sounds nice — what's actually true.</span>
         <input type="text" data-key="photo_words" placeholder="warm. patient. quiet." />
       </div>
 
       <div class="field">
-        <label>Three words for how the website should feel</label>
-        <span class="hint">The site has its own atmosphere — different from your photographs.</span>
+        <label>And three words for how the site should feel when someone arrives</label>
+        <span class="hint">A different feeling from your photographs — the site has its own atmosphere.</span>
         <input type="text" data-key="site_words" placeholder="calm, editorial, sun-bleached" />
       </div>
 
       <div class="field">
-        <label>The kind of person you want walking through your inbox</label>
-        <span class="hint">Two or three sentences. Be specific — you're describing a friend.</span>
-        <textarea data-key="dream_client" rows="3" placeholder="Someone who…"></textarea>
+        <label>Picture your favorite client. Tell me about them.</label>
+        <span class="hint">Two or three sentences. The kind of person you want filling your inbox.</span>
+        <textarea data-key="dream_client" rows="2" placeholder="Someone who…"></textarea>
       </div>
 
       <div class="field">
-        <label>And the kind of work you don't want</label>
-        <span class="hint">Saying no out loud helps the site say it for you, gently.</span>
+        <label>Is there work that just isn't yours?</label>
+        <span class="hint">It's okay to name it — saying no helps the site say it for you, gently.</span>
         <textarea data-key="no_work" rows="2" placeholder="Anything that feels…"></textarea>
       </div>
     </section>
@@ -541,19 +602,20 @@
       <div class="story">These tiny strings of text — a handle, an email, a name — are what the internet uses to recognize you. Pick the ones you want to be found by for the next decade.</div>
 
       <div class="field">
-        <label>Business name</label>
+        <label>What do you call your business?</label>
         <input type="text" data-key="biz_name" placeholder="Kylie Blue" />
       </div>
       <div class="field">
-        <label>Instagram handle</label>
+        <label>Where can people find you on Instagram?</label>
         <input type="text" data-key="ig" placeholder="@kylieblue" />
       </div>
       <div class="field">
-        <label>Other handles (Pinterest, TikTok — optional)</label>
+        <label>Anywhere else you live online?</label>
+        <span class="hint">Pinterest, TikTok, anywhere. Optional.</span>
         <input type="text" data-key="other_handles" placeholder="" />
       </div>
       <div class="field">
-        <label>Public-facing email</label>
+        <label>An email you're happy for clients to use</label>
         <input type="email" data-key="public_email" placeholder="hello@kylieblue.com" />
       </div>
     </section>
@@ -566,8 +628,8 @@
       <div class="story">You have great taste. Trust it. Drop in five to fifteen things that make you say "yes, like that" — they don't have to be photography. A magazine spread, a hotel lobby, a film still, a typeface — all useful. We'll read your taste exactly.</div>
 
       <div class="field">
-        <label>Your mood board</label>
-        <span class="hint">Drop or click. Images get resized for preview — full quality stays on your computer.</span>
+        <label>Drop in things you love</label>
+        <span class="hint">Anything that makes you say "yes, like that." Images get resized for preview — full quality stays on your computer.</span>
         <label class="upload" id="up-mood">
           <input type="file" multiple accept="image/*" data-bin="moodboard" />
           <p class="uic"><strong>+ ADD IMAGES</strong><br>or drag them here</p>
@@ -576,36 +638,36 @@
       </div>
 
       <div class="field">
-        <label>Photographer websites you'd love to be confused for</label>
+        <label>Whose photography sites make you stop scrolling?</label>
         <span class="hint">Two or three. Famous or unknown — doesn't matter.</span>
-        <textarea data-key="ref_sites" rows="3" placeholder="https://…"></textarea>
+        <textarea data-key="ref_sites" rows="2" placeholder="https://…"></textarea>
       </div>
 
       <div class="field">
-        <label>Something outside photography with the right energy</label>
-        <span class="hint">A brand, a hotel, a magazine, a film, a song.</span>
+        <label>Something not-photography that feels like you</label>
+        <span class="hint">A brand, a hotel, a magazine, a film, a song. Anything.</span>
         <input type="text" data-key="ref_outside" placeholder="" />
       </div>
 
       <div class="field">
-        <label>And the opposite</label>
-        <span class="hint">One or two sites that feel "not you" — sometimes "not that" is the clearest brief.</span>
+        <label>Anything that feels not-you?</label>
+        <span class="hint">Sites you'd hate to be compared to. Sometimes "not that" is the clearest answer.</span>
         <textarea data-key="ref_anti" rows="2" placeholder=""></textarea>
       </div>
 
       <div class="field">
-        <label>Color, in a sentence</label>
-        <span class="hint">Just describe what you see when you close your eyes.</span>
+        <label>If you close your eyes — what colors come up?</label>
+        <span class="hint">Just describe them in your own words.</span>
         <input type="text" data-key="color_word" placeholder="warm and earthy, almost film…" />
       </div>
 
       <div class="field">
-        <label>Type</label>
+        <label>What kind of typography feels right?</label>
         <div class="pill-group" data-pill-key="type_pref">
-          <button class="pill" type="button" data-val="modern-sans">Modern, sans-serif</button>
-          <button class="pill" type="button" data-val="editorial-serif">Editorial, serif</button>
-          <button class="pill" type="button" data-val="mix">A bit of both</button>
-          <button class="pill" type="button" data-val="trust-you">Trust you to feel it out</button>
+          <button class="pill" type="button" data-val="modern-sans">Clean and modern</button>
+          <button class="pill" type="button" data-val="editorial-serif">Editorial and serif</button>
+          <button class="pill" type="button" data-val="mix">A little of both</button>
+          <button class="pill" type="button" data-val="trust-you">You decide for me</button>
         </div>
       </div>
     </section>
@@ -618,8 +680,8 @@
       <div class="story">Awwwards-winning sites all share one thing — restraint. Your strongest 30 are stronger than 200. The fewer images you show, the more weight each one carries. Every cut makes the site stronger.</div>
 
       <div class="field">
-        <label>The one</label>
-        <span class="hint">The single image that, if a stranger saw nothing else, would tell them exactly who you are.</span>
+        <label>Your favorite — the one image</label>
+        <span class="hint">If a stranger saw only this, it would tell them exactly who you are.</span>
         <label class="upload">
           <input type="file" accept="image/*" data-bin="hero" />
           <p class="uic"><strong>+ ADD HERO IMAGE</strong></p>
@@ -628,8 +690,8 @@
       </div>
 
       <div class="field">
-        <label>You — a real headshot</label>
-        <span class="hint">Not a selfie. We're going to put it where people can see your face.</span>
+        <label>A real photo of you</label>
+        <span class="hint">Not a selfie. We want people to see your face.</span>
         <label class="upload">
           <input type="file" accept="image/*" data-bin="headshot" />
           <p class="uic"><strong>+ ADD HEADSHOT</strong></p>
@@ -638,15 +700,15 @@
       </div>
 
       <div class="field">
-        <label>Drop the rest in a folder, paste the link</label>
-        <span class="hint">30–50 of your strongest, mix of vertical + horizontal, mix of wide + detail. Dropbox, Drive, WeTransfer — whatever you use.</span>
+        <label>Drop the rest in a folder and paste the link</label>
+        <span class="hint">30–50 of your strongest. Mix of vertical + horizontal, mix of wide + detail. Dropbox, Drive, WeTransfer — whatever you use.</span>
         <input type="url" data-key="portfolio_link" placeholder="https://drive.google.com/…" />
       </div>
 
       <div class="field">
-        <label>How you want the work split into categories</label>
+        <label>How would you like the work grouped?</label>
         <span class="hint">Weddings / Couples / Families / Editorial — whatever yours are. Use the names you want on the site.</span>
-        <textarea data-key="categories" rows="3" placeholder=""></textarea>
+        <textarea data-key="categories" rows="2" placeholder=""></textarea>
       </div>
     </section>
 
@@ -658,25 +720,26 @@
       <div class="story">The strongest About pages don't sell. They sound exactly like the person who wrote them. Don't try to be impressive — be specific. Specific is what people remember ten years later.</div>
 
       <div class="field">
-        <label>Why you started shooting</label>
-        <textarea data-key="story_why" rows="3" placeholder=""></textarea>
+        <label>What made you start shooting?</label>
+        <textarea data-key="story_why" rows="2" placeholder=""></textarea>
       </div>
       <div class="field">
-        <label>What it feels like to be photographed by you</label>
-        <span class="hint">From the client's side of the camera.</span>
-        <textarea data-key="story_feel" rows="3" placeholder=""></textarea>
+        <label>What does it feel like, on the other side of your camera?</label>
+        <span class="hint">From the client's perspective — what's the experience like?</span>
+        <textarea data-key="story_feel" rows="2" placeholder=""></textarea>
       </div>
       <div class="field">
-        <label>What you want clients to feel when they look at their photos in ten years</label>
-        <textarea data-key="story_legacy" rows="3" placeholder=""></textarea>
+        <label>Ten years from now — what do you want them to feel when they look back at their photos?</label>
+        <textarea data-key="story_legacy" rows="2" placeholder=""></textarea>
       </div>
       <div class="field">
-        <label>Three things about you that have nothing to do with photography</label>
+        <label>Tell me three things about you that aren't photography</label>
         <span class="hint">Your dog, where you grew up, the album on repeat, the weird thing you collect.</span>
-        <textarea data-key="story_personal" rows="3" placeholder=""></textarea>
+        <textarea data-key="story_personal" rows="2" placeholder=""></textarea>
       </div>
       <div class="field">
-        <label>How you learned, anything you've been featured in (optional)</label>
+        <label>Anything else worth knowing — optional</label>
+        <span class="hint">How you learned. Where you've been featured. Anything you're proud of.</span>
         <textarea data-key="story_credits" rows="2" placeholder=""></textarea>
       </div>
     </section>
@@ -689,13 +752,13 @@
       <div class="story">Your prices teach clients what your work is worth. If the number scares you a little, write it down anyway — half the work of pricing is just saying it out loud. You can revise. You can't revise what you never named.</div>
 
       <div class="field">
-        <label>Your packages</label>
-        <span class="hint">Name each (give them voice — "The Half-Day," "The Whole Story" beats "Package 1") and list what's inside (hours, edited images, second shooter, prints, gallery delivery time).</span>
+        <label>What do you offer?</label>
+        <span class="hint">Name each one with some voice — "The Half-Day," "The Whole Story" beats "Package 1." List what's inside (hours, edited images, second shooter, prints, delivery time).</span>
         <textarea data-key="packages" rows="3" placeholder="The Whole Day — 8 hours, 600+ edited images, second shooter, gallery in 6 weeks…"></textarea>
       </div>
 
       <div class="field">
-        <label>How you want pricing shown</label>
+        <label>How should we show pricing?</label>
         <div class="pill-group" data-pill-key="pricing_style">
           <button class="pill" type="button" data-val="real">Real prices on the site</button>
           <button class="pill" type="button" data-val="starting">"Starting at" ranges</button>
@@ -704,13 +767,13 @@
       </div>
 
       <div class="field">
-        <label>Travel + deposit</label>
-        <span class="hint">How travel works (flat / per mile / included within X miles), and the deposit % to book.</span>
+        <label>Travel and deposits</label>
+        <span class="hint">How travel works (flat / per mile / included within X miles) and the deposit % to book.</span>
         <textarea data-key="travel_deposit" rows="2" placeholder=""></textarea>
       </div>
 
       <div class="field">
-        <label>Add-ons</label>
+        <label>Anything else bookable?</label>
         <span class="hint">Engagement session, rehearsal, second shooter, prints, an album.</span>
         <textarea data-key="addons" rows="2" placeholder=""></textarea>
       </div>
@@ -724,7 +787,7 @@
       <div class="story">The right questions filter the right people. Asking for a budget range gently teaches "this is a real conversation, not a window-shop." Asking how they found you teaches you which marketing actually works.</div>
 
       <div class="field">
-        <label>Form fields you want — pick all that apply</label>
+        <label>What do you want to ask people who reach out?</label>
         <div class="pill-group" data-pill-key="form_fields" data-multi="true">
           <button class="pill" type="button" data-val="phone">Phone</button>
           <button class="pill" type="button" data-val="date">Event date</button>
@@ -738,18 +801,18 @@
       </div>
 
       <div class="field">
-        <label>Anything else specific you want asked?</label>
+        <label>Anything else you want to ask?</label>
         <textarea data-key="form_extra" rows="2" placeholder=""></textarea>
       </div>
 
       <div class="field">
-        <label>Your auto-reply, in your voice</label>
-        <span class="hint">A few lines so they know you got it. Rough draft is plenty.</span>
+        <label>What do you want them to read after they hit send?</label>
+        <span class="hint">A few lines, in your voice, so they know you got it. Rough draft is plenty.</span>
         <textarea data-key="auto_reply" rows="2" placeholder="Thank you for reaching out — I…"></textarea>
       </div>
 
       <div class="field">
-        <label>How fast you commit to responding</label>
+        <label>How fast do you want to promise to respond?</label>
         <div class="pill-group" data-pill-key="response_time">
           <button class="pill" type="button" data-val="24h">Within 24 hours</button>
           <button class="pill" type="button" data-val="48h">Within 48 hours</button>
@@ -766,8 +829,8 @@
       <div class="story">FAQs aren't customer service. They're a chance to be funny, warm, and clear in a way nothing else on the site can be. The more "you" the answers sound, the more they convert. Skip the corporate voice — write like you'd text a friend.</div>
 
       <div class="field">
-        <label>Up to five questions and answers</label>
-        <span class="hint">Format any way that works — Q on one line, A on the next, or just write them as a list.</span>
+        <label>The questions you keep getting asked</label>
+        <span class="hint">Up to five Q&A pairs. Format any way that works — just a list is fine.</span>
         <textarea data-key="faqs" rows="3" placeholder="Q: How long until I get my photos?&#10;A: Around six weeks. I edit every image by hand and I'd rather give you the strongest gallery than the fastest one."></textarea>
       </div>
     </section>
@@ -780,20 +843,20 @@
       <div class="story">A screenshot of a sweet text from a bride is enough — we'll set it. The shorter and more specific the testimonial, the more it lands. "She made my mom feel beautiful for the first time in twenty years" beats "highly recommend!!" every time.</div>
 
       <div class="field">
-        <label>Three to seven testimonials</label>
-        <span class="hint">Quote, name, occasion. We'll format.</span>
+        <label>Sweet things people have said</label>
+        <span class="hint">Three to seven. A quote, a name, when. We'll format.</span>
         <textarea data-key="testimonials" rows="3" placeholder='"Kylie made our wedding day feel like a dream we got to live twice." — Sarah & Tom, August 2024'></textarea>
       </div>
 
       <div class="field">
-        <label>Press, features, publications</label>
-        <span class="hint">Anywhere your work has been written up — with links if you have them.</span>
-        <textarea data-key="press" rows="3" placeholder=""></textarea>
+        <label>Anywhere your work has been published</label>
+        <span class="hint">Magazines, blogs, features — links if you have them.</span>
+        <textarea data-key="press" rows="2" placeholder=""></textarea>
       </div>
 
       <div class="field">
-        <label>Notable venues, planners, brands</label>
-        <span class="hint">Only if it adds gravity.</span>
+        <label>Notable people you've worked with</label>
+        <span class="hint">Venues, planners, brands. Only if it adds something.</span>
         <textarea data-key="notable" rows="2" placeholder=""></textarea>
       </div>
     </section>
@@ -806,7 +869,7 @@
       <div class="story">You'll be surprised how clarifying it is to write down the things you hate. Every "no" you say here makes the design sharper. The bad photographer websites are bad because nobody told them what they didn't want.</div>
 
       <div class="field">
-        <label>Yes, please — pick anything you want on the site</label>
+        <label>Things you'd love to have</label>
         <div class="pill-group" data-pill-key="yes_features" data-multi="true">
           <button class="pill" type="button" data-val="journal">Journal / blog</button>
           <button class="pill" type="button" data-val="gallery">Private client gallery</button>
@@ -821,14 +884,14 @@
       </div>
 
       <div class="field">
-        <label>No, thanks — things that should never be on your site</label>
+        <label>Things that shouldn't be on the site</label>
         <span class="hint">Autoplay music, video backgrounds, popups, heavy animation — name them.</span>
         <textarea data-key="no_features" rows="2" placeholder=""></textarea>
       </div>
 
       <div class="field">
-        <label>Words and phrases that make you cringe</label>
-        <span class="hint">"Capturing memories," "timeless," "storyteller" — name what you never want on your site.</span>
+        <label>Words you never want to see</label>
+        <span class="hint">"Capturing memories," "timeless," "storyteller" — anything that makes you cringe.</span>
         <textarea data-key="cringe_words" rows="2" placeholder=""></textarea>
       </div>
     </section>
@@ -841,16 +904,16 @@
       <div class="story">Pick the date that scares you a little. The one that makes you feel like you have to actually finish your part. Deadlines are gifts — they protect the project from drifting.</div>
 
       <div class="field">
-        <label>Soft launch date you'd love to hit</label>
+        <label>A date you'd love to launch by</label>
         <input type="date" data-key="launch_date" />
       </div>
       <div class="field">
-        <label>Anything you're working backwards from</label>
+        <label>Anything you're working backwards from?</label>
         <span class="hint">A season, a press piece, a wedding on the books, a launch.</span>
         <textarea data-key="backwards_from" rows="2" placeholder=""></textarea>
       </div>
       <div class="field">
-        <label>Anything that would make this feel rushed in a bad way</label>
+        <label>Anything that would make this feel rushed?</label>
         <textarea data-key="rushed_concerns" rows="2" placeholder=""></textarea>
       </div>
     </section>
@@ -863,8 +926,8 @@
       <p class="lead">Look how clear that already is. Send it over and we'll start building. You can always come back and add more — your answers are saved on this device.</p>
 
       <div class="field">
-        <label>Anything else you want to say before sending?</label>
-        <textarea data-key="final_note" rows="3" placeholder="A last thought, a wish, anything."></textarea>
+        <label>Anything you want to say before sending?</label>
+        <textarea data-key="final_note" rows="2" placeholder="A last thought, a wish, anything."></textarea>
       </div>
 
       <div class="summary" id="summary"></div>
