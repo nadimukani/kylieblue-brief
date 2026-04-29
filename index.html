@@ -82,12 +82,12 @@
     transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
   }
   .meta {
-    font-family: var(--sans);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-style: italic;
     color: var(--soft);
     white-space: nowrap;
+    transition: opacity 0.5s ease;
   }
 
   /* ───────── STAGE ───────── */
@@ -98,11 +98,11 @@
   }
   .step {
     display: none;
-    animation: stepIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: stepIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .step.active { display: block; }
   @keyframes stepIn {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -210,7 +210,7 @@
     opacity: 0.6;
   }
   .field textarea {
-    min-height: 60px;
+    min-height: 44px;
     overflow: hidden;
   }
 
@@ -378,6 +378,25 @@
   }
   .actions-grid .btn { text-align: center; }
 
+  /* ───────── SKIP LINK ───────── */
+  .skip-row {
+    text-align: center;
+    padding: 14px 0 36px;
+  }
+  .skip-link {
+    background: transparent;
+    border: none;
+    color: var(--soft);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 12px;
+    transition: color 0.25s ease;
+  }
+  .skip-link:hover { color: var(--accent); }
+  .skip-row.hidden { display: none; }
+
   /* ───────── KEYBOARD HINT ───────── */
   .hint-key {
     font-family: var(--sans);
@@ -458,7 +477,7 @@
   <header class="topbar">
     <div class="mark">Kylie <em>Blue</em></div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="meta"><span id="cur">1</span> / <span id="total">12</span></div>
+    <div class="meta" id="phase">just beginning</div>
   </header>
 
   <main class="stage" id="stage">
@@ -468,7 +487,8 @@
       <h1>For<br><em>Kylie</em></h1>
       <div class="letter">
         <p>Hi my love,</p>
-        <p>This isn't a form. There's no right answer — a word, a screenshot, a feeling is enough. Skip what doesn't speak to you. Come back to it.</p>
+        <p>This isn't a form. There's no right answer — a word, a screenshot, a feeling is enough. Skip what doesn't speak to you. Come back to it whenever you want.</p>
+        <p>You can leave any time. Your answers stay safe right here, waiting for you. Nothing is permanent. Nothing is graded.</p>
         <p>By the time you finish, you're going to feel clearer about your work than you have in months. Promise.</p>
         <p class="aside">Take your time. This is going to be beautiful — like you.</p>
       </div>
@@ -671,7 +691,7 @@
       <div class="field">
         <label>Your packages</label>
         <span class="hint">Name each (give them voice — "The Half-Day," "The Whole Story" beats "Package 1") and list what's inside (hours, edited images, second shooter, prints, gallery delivery time).</span>
-        <textarea data-key="packages" rows="6" placeholder="The Whole Day — 8 hours, 600+ edited images, second shooter, gallery in 6 weeks…"></textarea>
+        <textarea data-key="packages" rows="3" placeholder="The Whole Day — 8 hours, 600+ edited images, second shooter, gallery in 6 weeks…"></textarea>
       </div>
 
       <div class="field">
@@ -725,7 +745,7 @@
       <div class="field">
         <label>Your auto-reply, in your voice</label>
         <span class="hint">A few lines so they know you got it. Rough draft is plenty.</span>
-        <textarea data-key="auto_reply" rows="4" placeholder="Thank you for reaching out — I…"></textarea>
+        <textarea data-key="auto_reply" rows="2" placeholder="Thank you for reaching out — I…"></textarea>
       </div>
 
       <div class="field">
@@ -748,7 +768,7 @@
       <div class="field">
         <label>Up to five questions and answers</label>
         <span class="hint">Format any way that works — Q on one line, A on the next, or just write them as a list.</span>
-        <textarea data-key="faqs" rows="10" placeholder="Q: How long until I get my photos?&#10;A: Around six weeks. I edit every image by hand and I'd rather give you the strongest gallery than the fastest one."></textarea>
+        <textarea data-key="faqs" rows="3" placeholder="Q: How long until I get my photos?&#10;A: Around six weeks. I edit every image by hand and I'd rather give you the strongest gallery than the fastest one."></textarea>
       </div>
     </section>
 
@@ -762,7 +782,7 @@
       <div class="field">
         <label>Three to seven testimonials</label>
         <span class="hint">Quote, name, occasion. We'll format.</span>
-        <textarea data-key="testimonials" rows="8" placeholder='"Kylie made our wedding day feel like a dream we got to live twice." — Sarah & Tom, August 2024'></textarea>
+        <textarea data-key="testimonials" rows="3" placeholder='"Kylie made our wedding day feel like a dream we got to live twice." — Sarah & Tom, August 2024'></textarea>
       </div>
 
       <div class="field">
@@ -861,9 +881,12 @@
 
   <footer class="nav">
     <button class="btn btn-ghost" id="back">← Back</button>
-    <span class="hint-key" id="autosave">Autosaved</span>
+    <span class="hint-key" id="autosave">your answers stay safe — leave any time</span>
     <button class="btn btn-primary" id="next">Continue</button>
   </footer>
+  <div class="skip-row" id="skip-row">
+    <button class="skip-link" id="skip">skip this for now →</button>
+  </div>
 
 </div>
 
@@ -895,11 +918,21 @@
   const stage = document.getElementById('stage');
   const steps = Array.from(document.querySelectorAll('.step'));
   const progFill = document.getElementById('progress-fill');
-  const cur = document.getElementById('cur');
-  const total = document.getElementById('total');
+  const phase = document.getElementById('phase');
   const back = document.getElementById('back');
   const next = document.getElementById('next');
-  total.textContent = TOTAL;
+
+  // soft phrases instead of "1 / 12" — she never has to know there are 12
+  function phraseFor(n) {
+    if (n === 0) return 'just beginning';
+    if (n <= 2) return 'getting warm';
+    if (n <= 4) return 'finding your voice';
+    if (n <= 6) return 'doing beautifully';
+    if (n <= 8) return 'past the middle';
+    if (n <= 10) return 'almost there';
+    if (n === 11) return 'last few questions';
+    return 'you did it';
+  }
 
   // ───── render ─────
   function setStep(n) {
@@ -916,11 +949,16 @@
         s.style.animation = '';
       }
     });
-    cur.textContent = n + 1;
+    // soft phase phrase, fades in
+    if (phase) {
+      phase.style.opacity = 0;
+      setTimeout(() => { phase.textContent = phraseFor(n); phase.style.opacity = 1; }, 180);
+    }
     progFill.style.width = ((n) / TOTAL * 100) + '%';
     back.disabled = n === 0;
     next.textContent = n === TOTAL ? 'You did it' : (n === 0 ? 'Begin →' : 'Continue →');
     next.disabled = n === TOTAL;
+    updateSkipVisibility(n);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (n === TOTAL) renderSummary();
   }
@@ -935,6 +973,22 @@
     setStep(state.step + 1);
     if (fromStep > 0 && fromStep < TOTAL) sendProgressCheckpoint(fromStep, 'forward');
   });
+
+  // skip for now — same as Continue but quieter (no checkpoint event flag change)
+  const skipBtn = document.getElementById('skip');
+  const skipRow = document.getElementById('skip-row');
+  if (skipBtn) {
+    skipBtn.addEventListener('click', () => {
+      const fromStep = state.step;
+      setStep(state.step + 1);
+      if (fromStep > 0 && fromStep < TOTAL) sendProgressCheckpoint(fromStep, 'skip');
+    });
+  }
+  function updateSkipVisibility(n) {
+    if (!skipRow) return;
+    // hide skip on cover (0) and final done (TOTAL)
+    skipRow.classList.toggle('hidden', n === 0 || n === TOTAL);
+  }
 
   // ───── progress checkpoint (writes cumulative state on Continue, Back, edit, pill) ─────
   let pendingCheckpoint = null;
@@ -1180,18 +1234,25 @@
     });
   }
 
-  // ───── autosave flash ─────
+  // ───── autosave flash — warm, rotating ─────
+  const SAVE_PHRASES = ['your words are safe', 'tucked away', 'got it', 'saved, sweet', 'all yours', 'kept'];
+  const REST_PHRASE = 'your answers stay safe — leave any time';
   let flashT;
+  let savePhraseIdx = 0;
   const autosaveEl = document.getElementById('autosave');
+  if (autosaveEl) autosaveEl.textContent = REST_PHRASE;
   function flashAutosave() {
-    autosaveEl.style.opacity = 0.4;
-    autosaveEl.textContent = 'Saving…';
+    if (!autosaveEl) return;
+    autosaveEl.style.opacity = 0.5;
     clearTimeout(flashT);
     flashT = setTimeout(() => {
       autosaveEl.style.opacity = 1;
-      autosaveEl.textContent = 'Saved';
-      setTimeout(() => { autosaveEl.textContent = 'Autosaved'; }, 1200);
-    }, 350);
+      autosaveEl.textContent = SAVE_PHRASES[savePhraseIdx % SAVE_PHRASES.length];
+      savePhraseIdx++;
+      setTimeout(() => {
+        autosaveEl.textContent = REST_PHRASE;
+      }, 2200);
+    }, 320);
   }
 
   // ───── summary / export ─────
