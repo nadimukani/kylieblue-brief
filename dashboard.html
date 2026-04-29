@@ -441,6 +441,7 @@ function renderSessions(sessions) {
     const isSub = !!s.submitted;
     const card = document.createElement('div');
     card.className = 'session ' + (isSub ? 'submitted' : 'in-progress');
+    card.dataset.sessionId = s.session_id;
     const pct = Math.round(((s.completed_step || 0) / (s.total_steps || 11)) * 100);
     const fieldsCount = Object.values(s.fields || {}).filter(v => v && String(v).trim()).length;
     const uploads = s.uploads || {};
@@ -535,7 +536,7 @@ function renderHeader(bucket, count) {
   wrap.innerHTML = `
     <header class="top">
       <div class="brand">Kylie <em>Blue</em> — Brief Dashboard</div>
-      <div class="meta-line"><span class="live"></span>Live · ${count} session${count === 1 ? '' : 's'} · refreshes every 30s</div>
+      <div class="meta-line"><span class="live"></span>Live · ${count} session${count === 1 ? '' : 's'} · refreshes every 10s</div>
     </header>
   `;
 }
@@ -551,22 +552,58 @@ function renderFooter(bucket) {
   wrap.appendChild(f);
 }
 
+// remember which session cards are expanded + which edit-history lists are open,
+// so silent auto-refresh doesn't collapse the user's view
+let lastSnapshot = '';
+function captureOpenState() {
+  return {
+    cards: new Set(Array.from(document.querySelectorAll('.session.open'))
+      .map(c => c.dataset.sessionId).filter(Boolean)),
+    histories: new Set(Array.from(document.querySelectorAll('.history-list.open'))
+      .map(l => l.id)),
+    scrollY: window.scrollY,
+  };
+}
+function restoreOpenState(s) {
+  if (!s) return;
+  s.cards.forEach(id => {
+    const card = document.querySelector(`.session[data-session-id="${CSS.escape(id)}"]`);
+    if (card) {
+      card.classList.add('open');
+      const t = card.querySelector('.toggle');
+      if (t) t.textContent = 'Hide answers ↑';
+    }
+  });
+  s.histories.forEach(id => {
+    const list = document.getElementById(id);
+    if (list) list.classList.add('open');
+  });
+  window.scrollTo(0, s.scrollY);
+}
+
 async function refresh() {
   const bucket = getBucket();
   if (!bucket) return showAuth();
   setBucket(bucket);
   try {
     const sessions = await loadSessions(bucket);
+    const snapshot = JSON.stringify(sessions.map(s => [
+      s.session_id, s.updated_at, s.completed_step, s.submitted,
+    ]));
+    if (snapshot === lastSnapshot) return; // nothing changed — leave DOM alone
+    lastSnapshot = snapshot;
+    const openState = captureOpenState();
     renderHeader(bucket, sessions.length);
     renderSessions(sessions);
     renderFooter(bucket);
+    restoreOpenState(openState);
   } catch (err) {
     document.getElementById('wrap').innerHTML = `
       <header class="top">
         <div class="brand">Kylie <em>Blue</em> — Brief Dashboard</div>
         <div class="meta-line">Connection issue</div>
       </header>
-      <div class="empty">Couldn't reach the data store. Retrying in 30s.<br><br><span style="font-size:13px;">${escapeHTML(err.message)}</span></div>
+      <div class="empty">Couldn't reach the data store. Retrying in 10s.<br><br><span style="font-size:13px;">${escapeHTML(err.message)}</span></div>
     `;
   }
 }
@@ -592,7 +629,11 @@ window.onAuthSubmit = function() {
 
 // initial + auto-refresh
 refresh();
-setInterval(refresh, 30000);
+setInterval(refresh, 10000);
+// also refresh when the tab is brought back to focus, so it's instantly fresh
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') refresh();
+});
 </script>
 
 </body>
