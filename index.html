@@ -878,6 +878,8 @@
     state.session_id = 's-' + (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
   }
   state.started_at = state.started_at || new Date().toISOString();
+  state.history = state.history || {};   // { fieldKey: [{v, t}, ...] } — first non-empty + every change
+  state.first = state.first || {};       // { fieldKey: firstNonEmptyValue }
 
   const save = () => localStorage.setItem(KEY, JSON.stringify(state));
 
@@ -906,44 +908,50 @@
     if (n === TOTAL) renderSummary();
   }
 
-  back.addEventListener('click', () => setStep(state.step - 1));
+  back.addEventListener('click', () => {
+    const fromStep = state.step;
+    setStep(state.step - 1);
+    if (fromStep > 0 && fromStep < TOTAL) sendProgressCheckpoint(fromStep, 'back');
+  });
   next.addEventListener('click', () => {
-    const goingForward = state.step < TOTAL;
     const fromStep = state.step;
     setStep(state.step + 1);
-    if (goingForward && fromStep > 0 && fromStep < TOTAL) {
-      sendProgressCheckpoint(fromStep);
-    }
+    if (fromStep > 0 && fromStep < TOTAL) sendProgressCheckpoint(fromStep, 'forward');
   });
 
-  // ───── progress checkpoint (writes cumulative state to kvdb on each forward Continue) ─────
-  let lastCheckpointHash = '';
-  async function sendProgressCheckpoint(completedStep) {
-    const payload = {
-      session_id: state.session_id,
-      started_at: state.started_at,
-      updated_at: new Date().toISOString(),
-      completed_step: completedStep,
-      total_steps: TOTAL - 1,
-      submitted: false,
-      name: state.fields.biz_name || state.fields.one_sentence?.slice(0, 60) || 'Anonymous session',
-      fields: state.fields,
-      pills: state.pills,
-      uploads: Object.fromEntries(
-        Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
-      ),
-      summary: buildText(),
-    };
-    const hash = completedStep + '|' + JSON.stringify(payload.fields).length;
-    if (hash === lastCheckpointHash) return;
-    lastCheckpointHash = hash;
-    try {
-      await fetch(KVDB_BASE + '/' + state.session_id, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (err) { /* fail silent — final submit is the source of truth */ }
+  // ───── progress checkpoint (writes cumulative state on Continue, Back, edit, pill) ─────
+  let pendingCheckpoint = null;
+  async function sendProgressCheckpoint(currentStep, reason) {
+    // coalesce rapid checkpoints (typing burst) into a single write ~600ms later
+    clearTimeout(pendingCheckpoint);
+    pendingCheckpoint = setTimeout(async () => {
+      const payload = {
+        session_id: state.session_id,
+        started_at: state.started_at,
+        updated_at: new Date().toISOString(),
+        last_event: reason || 'unknown',
+        current_step: currentStep,
+        completed_step: currentStep,
+        total_steps: TOTAL - 1,
+        submitted: false,
+        name: state.fields.biz_name || (state.fields.one_sentence || '').slice(0, 60) || 'Anonymous session',
+        fields: state.fields,
+        first: state.first,
+        history: state.history,
+        pills: state.pills,
+        uploads: Object.fromEntries(
+          Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
+        ),
+        summary: buildText(),
+      };
+      try {
+        await fetch(KVDB_BASE + '/' + state.session_id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) { /* fail silent — final submit is the source of truth */ }
+    }, 600);
   }
   async function markSubmitted() {
     try {
@@ -951,12 +959,15 @@
         session_id: state.session_id,
         started_at: state.started_at,
         updated_at: new Date().toISOString(),
+        last_event: 'submit',
         completed_step: TOTAL - 1,
         total_steps: TOTAL - 1,
         submitted: true,
         submitted_at: new Date().toISOString(),
         name: state.fields.biz_name || 'Kylie',
         fields: state.fields,
+        first: state.first,
+        history: state.history,
         pills: state.pills,
         uploads: Object.fromEntries(
           Object.keys(state.bins).map(b => [b, (state.bins[b] || []).length])
@@ -981,6 +992,18 @@
   });
 
   // ───── fields wiring ─────
+  const debounceTimers = {};
+  function recordHistory(k, v) {
+    const trimmed = (v || '').trim();
+    if (trimmed && state.first[k] === undefined) state.first[k] = trimmed; // capture first non-empty
+    state.history[k] = state.history[k] || [];
+    const last = state.history[k][state.history[k].length - 1];
+    if (!last || last.v !== v) {
+      state.history[k].push({ v, t: new Date().toISOString() });
+    }
+    save();
+  }
+
   document.querySelectorAll('[data-key]').forEach(el => {
     const k = el.dataset.key;
     if (state.fields[k] !== undefined) el.value = state.fields[k];
@@ -990,6 +1013,18 @@
       save();
       autoGrow(el);
       flashAutosave();
+      // debounce 1.2s, then record history + push checkpoint silently
+      clearTimeout(debounceTimers[k]);
+      debounceTimers[k] = setTimeout(() => {
+        recordHistory(k, el.value);
+        sendProgressCheckpoint(state.step, 'edit');
+      }, 1200);
+    });
+    el.addEventListener('blur', () => {
+      // make sure last value gets recorded immediately on blur
+      clearTimeout(debounceTimers[k]);
+      recordHistory(k, el.value);
+      sendProgressCheckpoint(state.step, 'edit');
     });
   });
 
@@ -1029,8 +1064,18 @@
           group.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
           p.classList.add('on');
         }
+        // record first pick + every change
+        const cur = state.pills[k];
+        const repr = Array.isArray(cur) ? cur.join(',') : (cur || '');
+        if (repr && state.first['pill_' + k] === undefined) state.first['pill_' + k] = repr;
+        state.history['pill_' + k] = state.history['pill_' + k] || [];
+        const last = state.history['pill_' + k][state.history['pill_' + k].length - 1];
+        if (!last || last.v !== repr) {
+          state.history['pill_' + k].push({ v: repr, t: new Date().toISOString() });
+        }
         save();
         flashAutosave();
+        sendProgressCheckpoint(state.step, 'pill');
       });
     });
   });

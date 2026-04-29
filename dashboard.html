@@ -176,7 +176,7 @@
   }
   .toggle:hover { color: var(--ink); border-color: var(--accent); }
 
-  .qa { margin: 0 0 14px; }
+  .qa { margin: 0 0 16px; }
   .qa .q {
     font-size: 12px;
     text-transform: uppercase;
@@ -184,13 +184,77 @@
     color: var(--soft);
     margin-bottom: 4px;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
+  .qa .q .edits {
+    font-family: var(--sans);
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    background: var(--paper);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--hair);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .qa .q .edits:hover { border-color: var(--accent); }
   .qa .a {
     font-family: var(--serif);
     font-size: 15.5px;
     line-height: 1.5;
     color: var(--ink);
     white-space: pre-wrap;
+  }
+  .qa .first {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    border-radius: 2px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--soft);
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .qa .first strong {
+    font-style: normal;
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-right: 8px;
+  }
+  .qa .history-list {
+    margin-top: 6px;
+    padding: 10px 14px;
+    background: var(--paper);
+    border-radius: 3px;
+    border: 1px solid var(--hair);
+    font-size: 13px;
+    color: var(--ink-2);
+    display: none;
+  }
+  .qa .history-list.open { display: block; }
+  .qa .history-list .h-row {
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--hair);
+    font-family: var(--serif);
+    line-height: 1.4;
+  }
+  .qa .history-list .h-row:last-child { border-bottom: none; }
+  .qa .history-list .h-row time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--soft);
+    display: block;
+    margin-bottom: 2px;
   }
 
   pre.raw {
@@ -407,17 +471,38 @@ function renderSessions(sessions) {
     `;
 
     const ansEl = card.querySelector('.answers');
+    const first = s.first || {};
+    const history = s.history || {};
     let qaHtml = '';
     for (const k in FIELD_LABELS) {
       const v = (s.fields || {})[k];
       if (v && String(v).trim()) {
-        qaHtml += `<div class="qa"><div class="q">${FIELD_LABELS[k]}</div><div class="a">${escapeHTML(v)}</div></div>`;
+        const firstVal = first[k];
+        const hist = (history[k] || []).filter(h => h.v && h.v.trim());
+        const editCount = Math.max(0, hist.length - 1);
+        const showFirst = firstVal && String(firstVal).trim() !== String(v).trim();
+        const histId = 'h-' + s.session_id + '-' + k;
+        qaHtml += `<div class="qa">
+          <div class="q">${FIELD_LABELS[k]}${editCount > 0 ? ` <span class="edits" data-target="${histId}">edited ${editCount}× — see all</span>` : ''}</div>
+          <div class="a">${escapeHTML(v)}</div>
+          ${showFirst ? `<div class="first"><strong>FIRST INSTINCT</strong>${escapeHTML(firstVal)}</div>` : ''}
+          ${hist.length > 1 ? `<div class="history-list" id="${histId}">${
+            hist.map(h => `<div class="h-row"><time>${new Date(h.t).toLocaleString()}</time>${escapeHTML(h.v)}</div>`).join('')
+          }</div>` : ''}
+        </div>`;
       }
     }
     for (const k in PILL_LABELS) {
       const v = (s.pills || {})[k];
       if (v && (Array.isArray(v) ? v.length : true)) {
-        qaHtml += `<div class="qa"><div class="q">${PILL_LABELS[k]}</div><div class="a">${escapeHTML(Array.isArray(v) ? v.join(', ') : v)}</div></div>`;
+        const firstVal = first['pill_' + k];
+        const cur = Array.isArray(v) ? v.join(', ') : v;
+        const showFirst = firstVal && firstVal !== cur;
+        qaHtml += `<div class="qa">
+          <div class="q">${PILL_LABELS[k]}</div>
+          <div class="a">${escapeHTML(cur)}</div>
+          ${showFirst ? `<div class="first"><strong>FIRST INSTINCT</strong>${escapeHTML(firstVal)}</div>` : ''}
+        </div>`;
       }
     }
     if (uploadsTotal) {
@@ -430,6 +515,18 @@ function renderSessions(sessions) {
     toggle.addEventListener('click', () => {
       card.classList.toggle('open');
       toggle.textContent = card.classList.contains('open') ? 'Hide answers ↑' : 'View answers ↓';
+    });
+
+    card.querySelectorAll('.edits').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = btn.dataset.target;
+        const list = card.querySelector('#' + CSS.escape(targetId));
+        if (list) {
+          const open = list.classList.toggle('open');
+          btn.textContent = open ? 'hide history ↑' : btn.textContent.replace(/^hide history ↑$/, '').replace(/.*?(\d+)×.*/, 'edited $1× — see all');
+        }
+      });
     });
 
     grid.appendChild(card);
